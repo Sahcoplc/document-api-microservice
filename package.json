@@ -1,6 +1,6 @@
 {
   "name": "document-api-microservice",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "SAHCO Document Microservice API",
   "main": "index.js",
   "scripts": {
