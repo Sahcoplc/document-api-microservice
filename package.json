@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "SAHCO Document Microservice API",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js",
+    "serve": "nodemon index.js",
     "semantic-release": "semantic-release"
   },
   "repository": {
