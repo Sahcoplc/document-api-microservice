@@ -1,21 +1,24 @@
 import express from "express";
-import session from "express-session";
+import expressSession from 'express-session'
 import compression from "compression";
 import dotenv from "dotenv";
 import http from 'http'
-import { io } from "./src/helpers/socket";
+import { io } from "./helpers/socket.js";
 dotenv.config('.');
+
+// Database
+import connectDb from "./db/connect.js";
 
 import morgan from "morgan";
 import cors from "cors";
 import path from "path";
+import helmet from "helmet";
 import { create } from "express-handlebars";
 import { __dirname } from "./__Globals.js";
-import helmet from "helmet";
 
 //Import Middleware
-import notFound from "./middlewares/notFound.js";
-import errorHandlerMiddleware from "./middlewares/errorHandler.js";
+import notFound from "./middleware/notFound.js";
+import errorHandlerMiddleware from "./middleware/errorHandler.js";
 
 const { NODE_ENV, SESSION_SECRET } = process.env;
 const app = express();
@@ -42,7 +45,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(
-    session({
+    expressSession({
         name: "sahcodocs",
         secret: SESSION_SECRET,
         saveUninitialized: false,
@@ -101,6 +104,9 @@ io.attach(server, {
 const server_start = async () => {
     try {
         // Open Mysql Connection
+
+        const connect = await connectDb.connect()
+        console.log(connect)
 
         // AppDataSource.initialize()
         // .then(() => {
