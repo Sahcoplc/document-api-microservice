@@ -103,7 +103,7 @@ io.attach(server, {
 
 const server_start = async () => {
     try {
-        // Open Mysql Connection
+        // Open Mssql Connection
 
         const connect = await connectDb.connect()
         console.log(connect)
