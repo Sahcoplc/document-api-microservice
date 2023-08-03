@@ -11,7 +11,7 @@ const serverStart = async () => {
         await connectDB()
 
         if (PORT == '' || PORT == null) {
-            PORT = 8097
+            PORT = 8037
         }
 
         server.listen(PORT, ()=> {
