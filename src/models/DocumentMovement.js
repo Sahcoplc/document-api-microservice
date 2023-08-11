@@ -24,7 +24,8 @@ const schema = new Schema(
         purpose: { type: String, required: true, enum: documentMovementPurpose, default: "TRANSFER" },
         operator: idAndNameSchema,
         documentId: { type: Schema.Types.ObjectId, ref: "Document", required: true }
-    }
+    },
+    { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 )
 
 schema.plugin(paginator);

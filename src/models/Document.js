@@ -36,7 +36,7 @@ const schema = new Schema(
             subDept: "String",
         }
     },
-    { timestamps: true }
+    { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true }, }
 )
 
 schema.plugin(paginator);
