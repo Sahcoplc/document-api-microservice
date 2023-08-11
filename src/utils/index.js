@@ -1,5 +1,4 @@
-import { insert } from "services/redis";
-import { fetch } from "./services/redis";
+import { fetch, insert } from "../services/redis.js";
 
 export const fancyDateNoTime = date => {
     const date_ = new Date(date)

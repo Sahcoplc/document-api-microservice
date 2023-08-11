@@ -22,7 +22,8 @@ const schema = new Schema(
         content: { type: Map, required: true },
         documentNo: { 
             type: "String", 
-            required: true, 
+            required: true,
+            unique: true, 
             default: async function () {
                 return await generateDocumentNo();
             } 
