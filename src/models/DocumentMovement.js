@@ -30,4 +30,4 @@ const schema = new Schema(
 
 schema.plugin(paginator);
 schema.plugin(mongooseAggregatePaginate);
-export default model("Document", schema);
+export default model("DocumentMovement", schema);
