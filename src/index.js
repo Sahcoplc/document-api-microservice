@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { connectDB } from "./services/database"
-import server from "./server"
+import { connectDB } from "./services/database.js"
+import server from "./server.js"
 
 let { PORT } = process.env
 

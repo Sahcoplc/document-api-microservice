@@ -1,5 +1,5 @@
-import { error } from "../helpers/response";
-import { CustomAPIError } from "../utils/errors/customError";
+import { error } from "../helpers/response.js";
+import { CustomAPIError } from "../utils/errors/customError.js";
 
 
 // eslint-disable-next-line no-unused-vars

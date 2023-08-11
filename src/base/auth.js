@@ -1,7 +1,7 @@
-import asyncWrapper from "../middlewares/async";
-import { getEmployee, getPermission } from "../helpers/fetch";
-import { createCustomError } from "../utils/errors/customError";
-import { openRoutes } from "./request";
+import asyncWrapper from "../middlewares/async.js";
+import { getEmployee, getPermission } from "../helpers/fetch.js";
+import { createCustomError } from "../utils/errors/customError.js";
+import { openRoutes } from "./request.js";
 
 /**
  * * authMiddleware
@@ -10,9 +10,7 @@ import { openRoutes } from "./request";
 
 const authMiddleware = asyncWrapper(async (req, res, next) => {
   try {
-    const isOpenRoute = openRoutes.some(
-      (route) => req.method === route.method && req.path === route.path
-    );
+    const isOpenRoute = openRoutes.some((route) => req.method === route.method && req.path === route.path);
     if (isOpenRoute) return next();
     const apiKey = req.headers["x-sahcoapi-key"];
     const { data: user } = await getEmployee(apiKey);

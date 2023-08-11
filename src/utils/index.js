@@ -1,3 +1,6 @@
+import { insert } from "services/redis";
+import { fetch } from "./services/redis";
+
 export const fancyDateNoTime = date => {
     const date_ = new Date(date)
       .toLocaleString()
@@ -46,3 +49,20 @@ export const _arrayObjectToString = (arr, label) => {
       return _joinArr(temp);
   }
 };
+
+export const generateDocumentNo = async () => {
+  let documentNo
+  const year = fancyDateNoTime(new Date()).split('-')[0]
+  let docNo = await fetch('docNo')
+  if (!docNo) {
+    docNo = 120001
+    await insert('docNo', docNo, { EX: 84600 })
+    documentNo = `${year}|${docNo}`
+  } else {
+    docNo = Number(docNo) + 1
+    documentNo = `${year}|${docNo}`
+    await insert('docNo', docNo, { EX: 84600 })
+  }
+
+  return documentNo
+}

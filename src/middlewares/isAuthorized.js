@@ -1,4 +1,4 @@
-import { error } from "../helpers/response";
+import { error } from "../helpers/response.js";
 
 export const isAuthorized = (requiredPermissions = [], requiredLocations = [], requiredDepts = []) =>
   async function checkAuthorization(req, res, next) {

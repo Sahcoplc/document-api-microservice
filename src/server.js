@@ -8,16 +8,15 @@ import morgan from "morgan";
 import helmet from "helmet";
 import expressSession from "express-session";
 import MongoStore from "connect-mongo";
-import { io } from "./helpers/socket";
-import { __dirname } from "./__Globals";
-import notFound from "./middlewares/notFound";
-import { apiBusy, rateLimiter } from "./middlewares/rateLimit";
-import errorHandlerMiddleware from "./middlewares/errorHandler";
-
-// Import routes
-import routes from "./routes/home";
-import authMiddleware from "./base/auth";
-import { client } from "./services/redis";
+import { io } from "./helpers/socket.js";
+import { __dirname } from "./__Globals.js";
+import notFound from "./middlewares/notFound.js";
+import { apiBusy, rateLimiter } from "./middlewares/rateLimit.js";
+import errorHandlerMiddleware from "./middlewares/errorHandler.js";
+import routes from "./routes/home.js";
+import authMiddleware from "./base/auth.js";
+import { client } from "./services/redis.js";
+import { generateDocumentNo } from "./utils/index.js";
 
 dotenv.config();
 
@@ -40,11 +39,7 @@ app.use(express.urlencoded({ extended: false }));
 const server = http.createServer(app);
 
 const getOrigin = (origin, callback) => {
-  const allowedOrigin =
-    !origin ||
-    ["localhost", "database-app-nine.vercel.app"].some((value) =>
-      origin.includes(value)
-    );
+  const allowedOrigin = !origin || ["localhost", "database-app-nine.vercel.app"].some((value) => origin.includes(value));
   if (allowedOrigin) {
     callback(null, true);
   } else {
@@ -66,7 +61,7 @@ const options = {
     secret: "squirrel",
   },
 };
-
+generateDocumentNo()
 app.use(cors(corsOptions));
 app.use(morgan("tiny"));
 app.use(helmet());
