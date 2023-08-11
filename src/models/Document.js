@@ -30,8 +30,8 @@ const schema = new Schema(
         },
         currentLocation: { type: "String", required: true },
         approvalTrail: [approvalSchema],
-        stationId: { type: "String", required: true },
-        parentStationId: "String",
+        station: idAndNameSchemaRequired,
+        parentStation: idAndNameSchemaRequired,
         department: {
             name: { type: "String", required: true }, 
             subDept: "String",
