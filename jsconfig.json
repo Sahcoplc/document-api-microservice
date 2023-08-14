@@ -10,9 +10,10 @@
         "mails": ["./src/mails"],
         "services": "./src/services",
         "models": "./src/models",
-        "controller": "./src/controller",
+        "controller": "./src/controllers",
         "db": "./src/db",
         "routes": "./src/routes",
-        "middleware": "./src/middleware",
+        "middleware": "./src/middlewares",
+        "utils": "./src/utils",
     }
 }

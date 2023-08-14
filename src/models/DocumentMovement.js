@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import paginator from "mongoose-paginate-v2";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import { documentMovementPurpose, documentTypes, idAndNameSchema, idAndNameSchemaRequired } from "../base/request";
+import { documentMovementPurpose, documentTypes, idAndNameSchema, idAndNameSchemaRequired } from "../base/request.js";
 
 const schema = new Schema(
     {

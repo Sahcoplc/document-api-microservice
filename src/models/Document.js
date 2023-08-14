@@ -1,8 +1,8 @@
 import { model, Schema } from "mongoose";
 import paginator from "mongoose-paginate-v2";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import { documentTypes, idAndNameSchemaRequired } from "../base/request";
-import { generateDocumentNo } from "utils";
+import { documentTypes, idAndNameSchemaRequired } from "../base/request.js";
+import { generateDocumentNo } from "../utils/index.js";
 
 const approvalSchema = {
     _id: "String",
@@ -35,7 +35,8 @@ const schema = new Schema(
         department: {
             name: { type: "String", required: true }, 
             subDept: "String",
-        }
+        },
+        attachments: [{ type: "String" }]
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true }, }
 )
