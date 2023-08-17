@@ -15,23 +15,23 @@ const mailTransport = nodemailer.createTransport({
 });
 
 mailTransport.verify((error, success) => {
-    if (error) {
-      console.log(`Mail transport error - ${error}`);
-    } else {
-      console.log(`Mail transport success - ${success}`);
-    }
+  if (error) {
+    console.log(`Mail transport error - ${error}`);
+  } else {
+    console.log(`Mail transport success - ${success}`);
+  }
 });
 
-export const sendMail = async (data = {}) => {
-    const mailOptions = {
+export const sendMail = async ({ email, subject, body, attachments }) => {
+  const mailOptions = {
     from: '"Skyway Aviation Handling Company Plc." <no-reply@sahcoplc.com.ng>',
-    to: data.email,
-    subject: data.subject || `Skyway Aviation Handling Company Plc.`,
-    html: data.body,
-    attachments: data.attachments
-    };
+    to: email,
+    subject: subject || `Skyway Aviation Handling Company Plc.`,
+    html: body,
+    attachments
+  };
 
-    const response = await mailTransport.sendMail(mailOptions) 
+  const response = await mailTransport.sendMail(mailOptions) 
 
-    console.log("Mail sent: ", response);
+  console.log("Mail sent: ", response);
 }

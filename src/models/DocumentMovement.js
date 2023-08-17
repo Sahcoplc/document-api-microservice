@@ -5,7 +5,7 @@ import { documentMovementPurpose, documentTypes, idAndNameSchema, idAndNameSchem
 
 const schema = new Schema(
     {
-        type: { type: String, enum: documentTypes, required: true },
+        type: { type: String, enum: documentTypes, default: "EXPENSE VOUCHER", required: true },
         from: {
             ...idAndNameSchemaRequired,
             dept: { type: String, required: true },
@@ -20,7 +20,7 @@ const schema = new Schema(
             email: { type: String, required: true },
             station: idAndNameSchemaRequired,
         },
-        parentStationId: idAndNameSchemaRequired,
+        parentStationId: { type: String, required: true },
         purpose: { type: String, required: true, enum: documentMovementPurpose, default: "TRANSFER" },
         operator: idAndNameSchema,
         documentId: { type: Schema.Types.ObjectId, ref: "Document", required: true }

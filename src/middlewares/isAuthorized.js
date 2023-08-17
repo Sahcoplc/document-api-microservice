@@ -3,15 +3,15 @@ import { error } from "../helpers/response.js";
 export const isAuthorized = (requiredPermissions = [], requiredLocations = [], requiredDepts = []) =>
   async function checkAuthorization(req, res, next) {
     try {
-        if (!req.user) return error(res, 400, "You are not logged in");
-        const { currentStation: { parent },permissions: { isController, actions, stations, departments, modules } } = req.user;
+      if (!req.user) return error(res, 400, "You are not logged in");
+      const { currentStation: { parent },permissions: { isController, actions, stations, departments, modules } } = req.user;
 
-        if (modules.length === 0 || modules.some((module) => module.section != "sahco-docs")) return error(res, 401, "You are not authorized")
-        
-        if (actions.length === 0 || stations.length === 0 || departments.length === 0) {
-          return error(res, 401, "You are not authorized")
-        }
+      const module = modules.find((module) => module.section === "sahco-docs")
       
+      if (actions.length === 0 || stations.length === 0 || departments.length === 0 || !module) {
+        return error(res, 401, "You are not authorized")
+      }
+
       const isOpenToAll = requiredPermissions.length === 0;
       const isOpenToAllLocation = requiredLocations.length === 0;
       const isOpenToAllDept = requiredDepts.length === 0;

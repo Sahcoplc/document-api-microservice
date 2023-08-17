@@ -2,7 +2,6 @@ import { model, Schema } from "mongoose";
 import paginator from "mongoose-paginate-v2";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 import { documentTypes, idAndNameSchemaRequired } from "../base/request.js";
-import { generateDocumentNo } from "../utils/index.js";
 
 const approvalSchema = {
     _id: "String",
@@ -20,18 +19,11 @@ const schema = new Schema(
         operator: idAndNameSchemaRequired,
         type: { type: "String", enum: documentTypes, default: "EXPENSE VOUCHER", required: true },
         content: { type: Map, required: true },
-        documentNo: { 
-            type: "String", 
-            required: true,
-            unique: true, 
-            default: async function () {
-                return await generateDocumentNo();
-            } 
-        },
+        documentNo: { type: "String", required: true, unique: true },
         currentLocation: { type: "String", required: true },
         approvalTrail: [approvalSchema],
         station: idAndNameSchemaRequired,
-        parentStation: idAndNameSchemaRequired,
+        parentStation: { type: "String", required: true },
         department: {
             name: { type: "String", required: true }, 
             subDept: "String",
