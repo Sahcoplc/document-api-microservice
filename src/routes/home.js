@@ -1,5 +1,6 @@
 import { Router } from "express";
 import docRoutes from "./document.js"
+import moveRoutes from "./docMovement.js"
 
 const router = Router();
 
@@ -11,5 +12,6 @@ router.get("/", (req, res) => {
 });
 
 router.use('/doc', docRoutes)
+router.use('/transfer', moveRoutes)
 
 export default router;

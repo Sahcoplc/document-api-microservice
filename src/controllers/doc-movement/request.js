@@ -25,9 +25,9 @@ export const createDocMovementSchema = Joi.object({
 
 export const validateDocMovement = asyncWrapper(async (req, res, next) => {
     try {
-        const { user: { _id, companyEmail, fullName, jobTitle, currentStation: { _id: stationId, code }, department: { name } }, body: { type, to: { _id: receiverId, documentId } }, apiKey } = req
+        const { user: { _id, companyEmail, fullName, jobTitle, currentStation: { _id: stationId, code }, department: { name } }, body: { type, documentId, to: { _id: receiverId } }, apiKey } = req
 
-        const doc = await Document.findById({ _id: ObjectId(documentId) }).lean()
+        const doc = await Document.findById({ _id: documentId }).lean()
 
         if (!doc) throw new BadRequest('Document does not exist')
 

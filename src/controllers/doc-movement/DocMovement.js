@@ -2,7 +2,7 @@ import DocumentMovement from "../../models/DocumentMovement.js"
 import { error, success } from "../../helpers/response.js"
 import asyncWrapper from "../../middlewares/async.js"
 import { sendMail } from "../../services/mail.js"
-import documentInbox from "mails/new-document.js"
+import documentInbox from "../../mails/new-document.js"
 
 class DocumentMovementControl {
     sendDocument = asyncWrapper(async (req, res) => {
