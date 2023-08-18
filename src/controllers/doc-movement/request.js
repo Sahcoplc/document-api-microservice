@@ -25,7 +25,7 @@ export const createDocMovementSchema = Joi.object({
 
 export const validateDocMovement = asyncWrapper(async (req, res, next) => {
     try {
-        const { user: { _id, companyEmail, fullName, jobTitle, currentStation: { _id: stationId, code }, department: { name } }, body: { type, documentId, to: { _id: receiverId } }, apiKey } = req
+        const { user: { _id, companyEmail, fullName, jobTitle, apiKey, currentStation: { _id: stationId, code, parent, parentStationId }, department: { name } }, body: { type, documentId, to: { _id: receiverId } } } = req
 
         const doc = await Document.findById({ _id: documentId }).lean()
 
@@ -59,7 +59,8 @@ export const validateDocMovement = asyncWrapper(async (req, res, next) => {
                         _id: data.currentStation._id,
                         name: data.currentStation.code
                     }
-                }
+                },
+                parentStationId: parent ? stationId : parentStationId
             }
         }
 

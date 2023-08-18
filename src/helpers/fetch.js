@@ -1,7 +1,7 @@
 import axios from "axios";
 import { createCustomError } from "../utils/errors/customError.js";
 
-const { SAHCO_HR_SERVER, FLIGHT_SCHEDULE, RAPIDAPI_HOST, RAPIDAPI_KEY, SAHCO_FLIGHT_SERVER } = process.env
+const { SAHCO_HR_SERVER } = process.env
 
 const API = (baseURL, headers) => {
     

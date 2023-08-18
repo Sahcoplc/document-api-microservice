@@ -20,6 +20,7 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
 
     return next();
   } catch (err) {
+    console.log('ERR:: ', err)
     throw createCustomError(err?.message || "Network Error", 500);
   }
 });
