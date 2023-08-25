@@ -33,18 +33,45 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// eslint-disable-next-line no-unused-vars
-const generateObjectParams = () => ({
-    s3: s3,
-    bucket: S3_BUCKET,
-    acl: "public-read",
-    metadata: function (req, file, cb) {
-        cb(null, { fieldName: file.fieldname });
-    },
-    key: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    },
+// // eslint-disable-next-line no-unused-vars
+// const generateObjectParams = () => ({
+//     s3: s3,
+//     bucket: S3_BUCKET,
+//     acl: "public-read",
+//     metadata: function (req, file, cb) {
+//         cb(null, { fieldName: file.fieldname });
+//     },
+//     key: (req, file, cb) => {
+//         cb(null, `${Date.now()}-${file.originalname}`);
+//     },
+// });
+
+const generateObjectParams = (binary, file, Key) => ({
+    ContentType: file.type,
+    Body: binary,
+    Key,
+    ContentEncoding: "base64",
+    Bucket: S3_BUCKET,
+    ACL: "public-read"
 });
+
+export const uploadFileToCloud = async (file, folder, oldFileUrl = null) => {
+    if (oldFileUrl) {
+        await deleteFile(oldFileUrl);
+    }
+    // eslint-disable-next-line new-cap
+    const binary = new Buffer.from(file.binaryString.replace(/^data:\w+\/\w+;base64,/, ""), "base64");
+    file.name = `${Date.now()}-${file.name}`;
+    const Key = `${folder}/${file.name}`;
+    const params = generateObjectParams(binary, file, Key);
+    const { Location } = await s3.upload(params).promise();
+    return Location;
+};
+
+export const uploadFiles = async (files, folder) => {
+    const uploadingFile = files.map(async (file) => uploadFileToCloud(file, folder));
+    return Promise.all(uploadingFile);
+};
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -64,7 +91,7 @@ const fileStorage = multer.diskStorage({
  * @returns {Object}
  */
 export const deleteFile = async (url) => {
-    const Key = url.substr(url.indexOf(".com") + 5, url.length);
+    const Key = url.substring(url.indexOf(".com") + 5, url.length);
     const Bucket = process.env.S3_BUCKET;
     return s3.deleteObject({ Bucket, Key }).promise();
 };
@@ -80,7 +107,7 @@ export const uploadFile = multer({
 })
 
 export const readFile = async (url) => {
-    const Key = url.substr(url.indexOf(".com") + 5, url.length);
+    const Key = url.substring(url.indexOf(".com") + 5, url.length);
     const params = { Bucket: S3_BUCKET, Key }
     const response = await s3.getObject(params).promise() 
     return response.Body
@@ -103,9 +130,7 @@ export const downloadCSVFileETL = (fileLocation) => new Promise((resolve) => {
     });
 
 // extract excel file from local storage
-export const downloadExcelFileETL = async (filename) => {
-    // eslint-disable-next-line no-undef
-    const path = `${__basedir}\\${filename}`;
+export const downloadExcelFileETL = async (path) => {
     const rows = await readXlsxFile(path)
     const keys = rows[0];
     rows.shift()

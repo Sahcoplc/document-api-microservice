@@ -17,6 +17,7 @@ import routes from "./routes/home.js";
 import authMiddleware from "./base/auth.js";
 import { client } from "./services/redis.js";
 import { generateDocumentNo } from "./utils/index.js";
+import { rollbar } from "./services/rollbar.js";
 
 dotenv.config();
 
@@ -82,29 +83,17 @@ app.use(
   })
 );
 
-global.__basedir = `${__dirname}\\assets`;
+global.__basedir = __dirname;
 
 // Routes
-app.use(`/api`, authMiddleware, routes);
+app.use(`/api`, apiBusy, rateLimiter, authMiddleware, routes);
+
+// Use the rollbar error handler to send exceptions to your rollbar account
+app.use(rollbar.errorHandler());
 
 // Use middlewares
 app.use(notFound);
 app.use(errorHandlerMiddleware);
-app.use(rateLimiter);
-app.use(apiBusy);
-
-/**
- * HANDLING UNCAUGHT EXCEPTION ERRORS
- * Process.traceDeprecation = true;
- */
-process.on("uncaughtException", (err) => {
-  // eslint-disable-next-line no-console
-  console.log(
-    `UNCAUGHT EXCEPTION! Server Shutting down...\n
-        ${err.name} \n ${err.message} \n ${err.stack}`
-  );
-  process.exit(1);
-});
 
 io.attach(server, {
   cors: {

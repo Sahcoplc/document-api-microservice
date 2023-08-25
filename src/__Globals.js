@@ -10,4 +10,6 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dir = path.dirname(__filename);
 
-export const __dirname = NODE_ENV === "test" ? __dir.slice(0, -4) : __dir;
+const __joinedDir = path.join(__dir, 'assets')
+
+export const __dirname = NODE_ENV === "test" ? __joinedDir.slice(0, -4) : __joinedDir;
