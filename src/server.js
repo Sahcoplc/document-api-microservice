@@ -16,7 +16,6 @@ import errorHandlerMiddleware from "./middlewares/errorHandler.js";
 import routes from "./routes/home.js";
 import authMiddleware from "./base/auth.js";
 import { client } from "./services/redis.js";
-import { generateDocumentNo } from "./utils/index.js";
 import { rollbar } from "./services/rollbar.js";
 
 dotenv.config();
@@ -62,7 +61,7 @@ const options = {
     secret: "squirrel",
   },
 };
-generateDocumentNo()
+
 app.use(cors(corsOptions));
 app.use(morgan("tiny"));
 app.use(helmet());
