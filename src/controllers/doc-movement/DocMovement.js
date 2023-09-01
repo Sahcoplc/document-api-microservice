@@ -28,6 +28,8 @@ class DocumentMovementControl {
             return error(res, 500, e)
         }
     })
+
+    getDocumentMovement = asyncWrapper(async (req, res) => {})
 }
 
 export default DocumentMovementControl

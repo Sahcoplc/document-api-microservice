@@ -1,5 +1,6 @@
 import AWS from "aws-sdk";
 import multer from "multer"
+import multerS3 from 'multer-s3'
 import Papa from "papaparse"
 import request from "request";
 import stream from "scramjet";
@@ -10,11 +11,11 @@ import readXlsxFile from "read-excel-file/node";
 
 dotenv.config();
 
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_BUCKET } = process.env
+const { AWS_ACCESS_ID, AWS_SECRET_ACCESS, S3_BUCKET } = process.env
 
 AWS.config.update({
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    accessKeyId: AWS_ACCESS_ID,
+    secretAccessKey: AWS_SECRET_ACCESS,
     region: "eu-west-1"
 });
 
@@ -22,29 +23,26 @@ const { StringStream } = stream
 const s3 = new AWS.S3();
 
 const fileFilter = (req, file, cb) => {
-    const acceptedMimes = [
-        'image/png', 'image/jpg', 'image/jpeg', 'image/webp', "image/svg+xml",
-        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    ]
+    const acceptedMimes = ['image/png', 'image/jpg', 'image/jpeg', 'text/csv', 'image/webp', "image/svg+xml" ]
     if (acceptedMimes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb("Error: CSV|Excel only");
+        cb("Error: CSV|Images only");
     }
 };
 
-// // eslint-disable-next-line no-unused-vars
-// const generateObjectParams = () => ({
-//     s3: s3,
-//     bucket: S3_BUCKET,
-//     acl: "public-read",
-//     metadata: function (req, file, cb) {
-//         cb(null, { fieldName: file.fieldname });
-//     },
-//     key: (req, file, cb) => {
-//         cb(null, `${Date.now()}-${file.originalname}`);
-//     },
-// });
+// eslint-disable-next-line no-unused-vars
+const generateObjectParamsMulter = () => ({
+    s3: s3,
+    bucket: S3_BUCKET,
+    acl: "public-read",
+    metadata: function (req, file, cb) {
+        cb(null, { fieldName: file.fieldname });
+    },
+    key: (req, file, cb) => {
+        cb(null, `docs/${file.originalname}`);
+    },
+});
 
 const generateObjectParams = (binary, file, Key) => ({
     ContentType: file.type,
@@ -73,16 +71,6 @@ export const uploadFiles = async (files, folder) => {
     return Promise.all(uploadingFile);
 };
 
-const fileStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      // eslint-disable-next-line no-undef
-      cb(null, `${__basedir}/`);
-    },
-    filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-employees-${file.originalname}`);
-    },
-});
-
 /**
  * * deleteFile
  * Deletes a file from the AWS bucket
@@ -98,8 +86,9 @@ export const deleteFile = async (url) => {
 /**
  * * uploadFile
  */
+
 export const uploadFile = multer({
-    storage: fileStorage, // NODE_ENV === "development" ? multerS3({...generateObjectParams()}) : fileStorage,
+    storage: multerS3({...generateObjectParamsMulter()}),
     fileFilter: fileFilter,
     limits: {
         fileSize: 1024 * 1024 * 5
@@ -153,7 +142,7 @@ cloudinary.config({
 const cloudinaryStorage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: "/sahco-prime",
+        folder: "/sahco-docs",
     },
 });
     

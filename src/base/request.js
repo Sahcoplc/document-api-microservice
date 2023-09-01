@@ -43,3 +43,8 @@ export const documentMovementPurpose = {
     transfer: "TRANSFER",
     approval: "APPROVAL"
 }
+
+export const documentMovementStatus = {
+    pending: 'PENDING',
+    completed: 'COMPLETED'
+}

@@ -5,6 +5,7 @@ import Document from "../../models/Document.js"
 import BadRequest from "../../utils/errors/badRequest.js"
 import { generateDocumentNo } from "../../utils/index.js"
 import asyncWrapper from "../../middlewares/async.js"
+import { uploadFiles } from "services/storage.js"
 
 const touringAdvance = {
     tripDetails: Joi.object({
@@ -160,13 +161,9 @@ export const filterDocSchema = Joi.object({
 export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
     try {
 
-        const { file, user: { _id, fullName, subDept, department: { name: deptName }, currentStation: { _id: stationId, name, code, parent, parentStation } }, body } = req
+        const { user: { _id, fullName, subDept, department: { name: deptName }, currentStation: { _id: stationId, name, code, parent, parentStation } }, body } = req
 
-        let attachments = []
-
-        file?.forEach(f => {
-            if (f.location) attachments.push(f.location)
-        });
+        if (body.attachments) body.attachments = await uploadFiles(body.attachments, 'docs-attachments')
 
         req.locals = {
             ...req.locals,
@@ -178,7 +175,6 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
                 station: { name: code, _id: stationId },
                 department: { name: deptName, subDept },
                 documentNo: await generateDocumentNo(),
-                attachments
             }
         }
 
@@ -191,7 +187,7 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
 export const validateUpdateDocument = asyncWrapper(async (req, res, next) => {
     try {
 
-        const { params: { id }, body: { type }, user: { _id } } = req
+        const { params: { id }, body: { type, attachments }, user: { _id } } = req
 
         const doc = await Document.findById({ _id: id }).select('approvalTrail operator').lean()
 
@@ -203,9 +199,11 @@ export const validateUpdateDocument = asyncWrapper(async (req, res, next) => {
             throw BadRequest(`Document: ${type} has recently been approved`)
         }
 
+        if (attachments) req.body.attachments = await uploadFiles(attachments, 'docs-attachments')
+
         return next()
 
     } catch (e) {
-        return error(res, e?.statusCode, e)
+        return error(res, 500, e)
     }
 })

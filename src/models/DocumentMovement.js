@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import paginator from "mongoose-paginate-v2";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import { documentMovementPurpose, documentTypes, idAndNameSchema, idAndNameSchemaRequired } from "../base/request.js";
+import { documentMovementPurpose, documentMovementStatus, documentTypes, idAndNameSchema, idAndNameSchemaRequired } from "../base/request.js";
 
 const schema = new Schema(
     {
@@ -23,7 +23,8 @@ const schema = new Schema(
         parentStationId: { type: String, required: true },
         purpose: { type: String, required: true, enum: documentMovementPurpose, default: "TRANSFER" },
         operator: idAndNameSchema,
-        documentId: { type: Schema.Types.ObjectId, ref: "Document", required: true }
+        documentId: { type: Schema.Types.ObjectId, ref: "Document", required: true },
+        status: { type: "String", required: true, default: documentMovementStatus.pending }
     },
     { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 )
