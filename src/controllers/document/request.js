@@ -5,7 +5,7 @@ import Document from "../../models/Document.js"
 import BadRequest from "../../utils/errors/badRequest.js"
 import { generateDocumentNo } from "../../utils/index.js"
 import asyncWrapper from "../../middlewares/async.js"
-import { uploadFiles } from "services/storage.js"
+import { uploadFiles } from "../../services/storage.js"
 
 const touringAdvance = {
     tripDetails: Joi.object({
