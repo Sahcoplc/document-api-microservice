@@ -226,7 +226,6 @@ export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
     try {
         const { user: { _id: userId, fullName }, params: { id, movementId }, body } = req
 
-        console.log('REQ QUR:: ', req.params)
         const doc = await Document.findById({ _id: id }).select('approvalTrail operator').lean()
         const movement = await DocumentMovement.findById({ _id: movementId })
         
@@ -245,7 +244,6 @@ export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
 
         return next()
     } catch (e) {
-        console.log('RER:: ', e)
         return error(res, 500, e) 
     }
 })
