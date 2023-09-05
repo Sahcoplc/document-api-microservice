@@ -1,17 +1,15 @@
 import { model, Schema } from "mongoose";
 import paginator from "mongoose-paginate-v2";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import { documentTypes, idAndNameSchemaRequired } from "../base/request.js";
+import { approvalStatus, documentTypes, idAndNameSchemaRequired } from "../base/request.js";
 
 const approvalSchema = {
     _id: "String",
     name: "String",
-    department: "String",
-    jobTitle: "String",
     comment: "String",
     isApproved: Boolean,
-    status: { type: "String" },
-    date: Date
+    status: { type: "String", default: approvalStatus.pending },
+    approvalDate: { type: "Date", default: new Date() }
 }
 
 const schema = new Schema(

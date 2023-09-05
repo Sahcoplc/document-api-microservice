@@ -1,11 +1,12 @@
 import Joi from "joi"
-import { approvalStatus, documentTypes } from "../../base/request.js"
+import { approvalStatus, documentMovementStatus, documentTypes } from "../../base/request.js"
 import { error } from "../../helpers/response.js"
 import Document from "../../models/Document.js"
 import BadRequest from "../../utils/errors/badRequest.js"
 import { generateDocumentNo } from "../../utils/index.js"
 import asyncWrapper from "../../middlewares/async.js"
 import { uploadFiles } from "../../services/storage.js"
+import DocumentMovement from "../../models/DocumentMovement.js"
 
 const touringAdvance = {
     tripDetails: Joi.object({
@@ -158,6 +159,17 @@ export const filterDocSchema = Joi.object({
     documentNo: Joi.string()
 })
 
+export const approveDocSchema = Joi.object({
+    isApproved: Joi.boolean().required(),
+    comment: Joi.string().required(),
+    status: Joi.string().valid(...Object.values(approvalStatus)).required()
+})
+
+export const approveIdsSchema = Joi.object({
+    id: Joi.string().required(),
+    movementId: Joi.string().required()
+})
+
 export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
     try {
 
@@ -191,12 +203,14 @@ export const validateUpdateDocument = asyncWrapper(async (req, res, next) => {
 
         const doc = await Document.findById({ _id: id }).select('approvalTrail operator').lean()
 
-        if (!doc) throw BadRequest(`Document: ${type} does not exist`)
+        const transfer = await DocumentMovement.findOne({ documentId: doc._id })
 
-        if (doc.operator._id != _id) throw BadRequest('Document not created or owned by you')
+        if (!doc) throw new BadRequest(`Document: ${type} does not exist`)
 
-        if (doc.approvalTrail.length > 0 && doc.approvalTrail[doc.approvalTrail.length - 1].status != approvalStatus.declined) {
-            throw BadRequest(`Document: ${type} has recently been approved`)
+        if (doc.operator._id != _id) throw new BadRequest('Document not created or owned by you')
+
+        if (transfer && doc.approvalTrail.length > 0 && doc.approvalTrail[doc.approvalTrail.length - 1].status != approvalStatus.declined) {
+            throw new BadRequest(`Document: ${type} has recently been approved`)
         }
 
         if (attachments) req.body.attachments = await uploadFiles(attachments, 'docs-attachments')
@@ -205,5 +219,33 @@ export const validateUpdateDocument = asyncWrapper(async (req, res, next) => {
 
     } catch (e) {
         return error(res, 500, e)
+    }
+})
+
+export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
+    try {
+        const { user: { _id: userId, fullName }, params: { id, movementId }, body } = req
+
+        console.log('REQ QUR:: ', req.params)
+        const doc = await Document.findById({ _id: id }).select('approvalTrail operator').lean()
+        const movement = await DocumentMovement.findById({ _id: movementId })
+        
+        if (!doc) throw BadRequest(`Document: ${doc.type} does not exist`)
+        if (doc.operator._id === userId) throw new BadRequest('Document created or owned by you')
+        if (movement.status === documentMovementStatus.completed) throw new BadRequest('Document approval request has been completed')
+        
+        const trail = doc.approvalTrail
+        const approvalRequest = {
+            _id: userId,
+            name: fullName,
+            ...body
+        }
+        trail.push(approvalRequest)
+        req.locals.approvalRequest = trail
+
+        return next()
+    } catch (e) {
+        console.log('RER:: ', e)
+        return error(res, 500, e) 
     }
 })

@@ -6,14 +6,14 @@
     },
     "exclude": ["node_modules"],
     "paths": {
-        "helpers": ["helpers"],
+        "base": ["./src/base"],
+        "helpers": ["./src/helpers"],
         "mails": ["./src/mails"],
-        "services": "./src/services",
-        "models": "./src/models",
-        "controller": "./src/controllers",
-        "db": "./src/db",
-        "routes": "./src/routes",
-        "middleware": "./src/middlewares",
-        "utils": "./src/utils",
+        "services": ["./src/services"],
+        "models": ["./src/models"],
+        "controllers": ["./src/controllers"],
+        "routes": ["./src/routes"],
+        "middlewares": ["./src/middlewares"],
+        "utils": ["./src/utils"],
     }
 }

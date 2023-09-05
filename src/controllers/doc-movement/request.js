@@ -23,6 +23,15 @@ export const createDocMovementSchema = Joi.object({
     documentId: Joi.string().required()
 })
 
+export const fetchTransferSchema = Joi.object({
+    page: Joi.number().required(),
+    limit: Joi.number(),
+    type: Joi.string().valid(...Object.values(documentTypes)),
+    sender: Joi.string(),
+    startDate: Joi.date(),
+    endDate: Joi.date().greater(Joi.ref("startDate"))
+})
+
 export const validateDocMovement = asyncWrapper(async (req, res, next) => {
     try {
         const { user: { _id, companyEmail, fullName, jobTitle, apiKey, currentStation: { _id: stationId, code, parent, parentStationId }, department: { name } }, body: { type, documentId, to: { _id: receiverId } } } = req
