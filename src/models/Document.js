@@ -28,7 +28,7 @@ const schema = new Schema(
         },
         attachments: [{ type: "String" }]
     },
-    { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true }, }
+    { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
 schema.plugin(paginator);

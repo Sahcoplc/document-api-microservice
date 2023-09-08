@@ -5,8 +5,7 @@ import asyncWrapper from "../../middlewares/async.js"
 import Document from "../../models/Document.js"
 import DocumentMovement from "../../models/DocumentMovement.js"
 import { generateFilter } from "./helper.js"
-import { sendNotification } from "../../helpers/fetch.js"
-import { documentMovementStatus } from "../../base/request.js"
+import { getEmployee, sendNotification } from "../../helpers/fetch.js"
 import { startSession } from 'mongoose'
 import documentApproval from "../../mails/document-approval.js"
 
@@ -68,9 +67,8 @@ class DocumentController {
             let approval = null
             const session = await startSession()
             await session.withTransaction(async () => {
-
                 approval = await Document.findByIdAndUpdate({ _id: id }, { $set: { approvalTrail: approvalRequest }}, { new: true, session })
-                const transfer = await DocumentMovement.findOneAndUpdate({ _id: movementId }, { $set: { status: documentMovementStatus.completed }}, { new: true, session })
+                const transfer = await DocumentMovement.findById({ _id: movementId })
                 const notify = {
                     title: 'Document Approval',
                     body: `${fullName} from ${name} has ${approvalRequest.status} your document`,
@@ -78,14 +76,15 @@ class DocumentController {
                     receiver: approval.operator._id,
                     isAll: false
                 }
+                const { data } = await getEmployee(apiKey, approval.operator._id)
     
                 await sendNotification(apiKey, notify)
                 await sendMail({
-                    email: transfer.from.email,
+                    email: data.companyEmail,
                     subject: "DOCUMENT APPROVAL",
                     body: documentApproval({
                         title: "DOCUMENT APPROVAL",
-                        name: transfer.from.name,
+                        name: approval.name,
                         department: transfer.to.dept,
                         senderName: transfer.to.name,
                         documentType: transfer.type

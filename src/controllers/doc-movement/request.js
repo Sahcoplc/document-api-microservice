@@ -4,8 +4,9 @@ import asyncWrapper from '../../middlewares/async.js'
 import { error } from '../../helpers/response.js'
 import Document from '../../models/Document.js'
 import BadRequest from '../../utils/errors/badRequest.js'
-import { documentMovementPurpose, documentTypes } from '../../base/request.js'
+import { documentMovementPurpose, documentMovementStatus, documentTypes } from '../../base/request.js'
 import { getEmployee } from '../../helpers/fetch.js'
+import DocumentMovement from '../../models/DocumentMovement.js'
 
 const { ObjectId } = Types
 
@@ -38,9 +39,15 @@ export const validateDocMovement = asyncWrapper(async (req, res, next) => {
 
         const doc = await Document.findById({ _id: documentId }).lean()
 
+        const docTransfer = await DocumentMovement.findOne({ documentId, status: documentMovementStatus.pending }).lean()
+
         if (!doc) throw new BadRequest('Document does not exist')
 
         if (doc.type != type) throw new BadRequest('Wrong document to be transferred')
+
+        if (docTransfer) {
+            await DocumentMovement.updateOne({ _id: docTransfer._id }, { $set: { status: documentMovementStatus.completed } }, { new: true })
+        }
 
         const { data } = await getEmployee(apiKey, receiverId)
 

@@ -233,7 +233,7 @@ export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
         if (doc.operator._id === userId) throw new BadRequest('Document created or owned by you')
         if (movement.status === documentMovementStatus.completed) throw new BadRequest('Document approval request has been completed')
         
-        const trail = doc.approvalTrail
+        const trail = doc?.approvalTrail || []
         const approvalRequest = {
             _id: userId,
             name: fullName,
