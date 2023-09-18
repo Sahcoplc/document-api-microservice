@@ -13,7 +13,7 @@ import { __dirname } from "./__Globals.js";
 import notFound from "./middlewares/notFound.js";
 import { apiBusy, rateLimiter } from "./middlewares/rateLimit.js";
 import errorHandlerMiddleware from "./middlewares/errorHandler.js";
-import routes from "./routes/home.js";
+import routes from "./routes/index.js";
 import authMiddleware from "./base/auth.js";
 import { client } from "./services/redis.js";
 import { rollbar } from "./services/rollbar.js";
