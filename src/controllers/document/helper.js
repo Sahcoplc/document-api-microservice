@@ -25,3 +25,5 @@ export const generateFilter = (req) => {
     
     return filter
 }
+
+export const generateDocumentNo = (form = true, deptCode, docTitle, docInteger) => `SAHCO/${deptCode}/${form ? 'F' : 'M'}/${docTitle}/${docInteger}`

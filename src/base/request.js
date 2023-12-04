@@ -35,8 +35,17 @@ export const documentTypes = {
     cashAdvance: "CASH ADVANCE FORM",
     facilitiesRepair: "FACILITIES REPAIR/MAINTENANCE REQUEST FORM",
     cashAdvanceRetirement: "CASH ADVANCE REQUIREMENT VOUCHER",
-    leaveApplication: "LEAVE APPLICATION",
     allowanceExpensesClaims: "ALLOWANCES AND EXPENSES CLAIMS REINBURSEMENT/RETIREMENT"
+}
+
+export const docDeptTitle = {
+    "EXPENSE VOUCHER": "FIN",
+    "TOURING ADVANCE REQUEST": "FIN",
+    "TRANSPORT VOUCHER": "FIN",
+    "CASH ADVANCE FORM": "FIN",
+    "FACILITIES REPAIR/MAINTENANCE REQUEST FORM": "ADM",
+    "CASH ADVANCE REQUIREMENT VOUCHER": "FIN",
+    "ALLOWANCES AND EXPENSES CLAIMS REINBURSEMENT/RETIREMENT": "HR"
 }
 
 export const documentMovementPurpose = {

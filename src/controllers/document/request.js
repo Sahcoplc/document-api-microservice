@@ -1,12 +1,12 @@
 import Joi from "joi"
-import { approvalStatus, documentMovementStatus, documentTypes } from "../../base/request.js"
+import { approvalStatus, docDeptTitle, documentMovementStatus, documentTypes } from "../../base/request.js"
 import { error } from "../../helpers/response.js"
 import Document from "../../models/Document.js"
 import BadRequest from "../../utils/errors/badRequest.js"
-import { generateDocumentNo } from "../../utils/index.js"
 import asyncWrapper from "../../middlewares/async.js"
 import { uploadFiles } from "../../services/storage.js"
 import DocumentMovement from "../../models/DocumentMovement.js"
+import { generateDocumentNo } from "./helper.js"
 
 const touringAdvance = {
     tripDetails: Joi.object({
@@ -177,6 +177,17 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
 
         if (body.attachments) body.attachments = await uploadFiles(body.attachments, 'docs-attachments')
 
+        const matches = body.type.match(/\b(\w)/g).join('');
+
+        let docNo = '001'
+
+        const document = await Document.findOne({ type: body.type }).sort({ createdAt: -1}).select('documentNo').lean()
+
+        if (document) {
+            let no = document.documentNo.split('/')[4]
+            docNo = Number(no) += 1
+        }
+
         req.locals = {
             ...req.locals,
             document: {
@@ -186,7 +197,7 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
                 parentStation: parent ? stationId : parentStation._id,
                 station: { name: code, _id: stationId },
                 department: { name: deptName, subDept },
-                documentNo: await generateDocumentNo(),
+                documentNo: generateDocumentNo(true, docDeptTitle[title], matches, docNo),
             }
         }
 

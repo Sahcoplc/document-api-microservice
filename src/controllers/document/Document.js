@@ -8,6 +8,7 @@ import { generateFilter } from "./helper.js"
 import { getEmployee, sendNotification } from "../../helpers/fetch.js"
 import { startSession } from 'mongoose'
 import documentApproval from "../../mails/document-approval.js"
+import { documentMovementStatus } from "base/request.js"
 
 class DocumentController {
 
@@ -68,7 +69,7 @@ class DocumentController {
             const session = await startSession()
             await session.withTransaction(async () => {
                 approval = await Document.findByIdAndUpdate({ _id: id }, { $set: { approvalTrail: approvalRequest }}, { new: true, session })
-                const transfer = await DocumentMovement.findById({ _id: movementId })
+                const transfer = await DocumentMovement.findByIdAndUpdate({ _id: movementId }, { $set: { status: documentMovementStatus.completed }}, { new: true, session })
                 const notify = {
                     title: 'Document Approval',
                     body: `${fullName} from ${name} has ${approvalRequest.status} your document`,
