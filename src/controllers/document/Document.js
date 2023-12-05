@@ -8,7 +8,7 @@ import { generateFilter } from "./helper.js"
 import { getEmployee, sendNotification } from "../../helpers/fetch.js"
 import { startSession } from 'mongoose'
 import documentApproval from "../../mails/document-approval.js"
-import { documentMovementStatus } from "base/request.js"
+import { documentMovementStatus } from "../../base/request.js"
 
 class DocumentController {
 

@@ -185,7 +185,10 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
 
         if (document) {
             let no = document.documentNo.split('/')[4]
-            docNo = Number(no) += 1
+            if (typeof no === 'undefined') no = docNo
+            no = parseInt(no)
+            no += 1
+            docNo = `00${no}`
         }
 
         req.locals = {
@@ -197,7 +200,7 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
                 parentStation: parent ? stationId : parentStation._id,
                 station: { name: code, _id: stationId },
                 department: { name: deptName, subDept },
-                documentNo: generateDocumentNo(true, docDeptTitle[title], matches, docNo),
+                documentNo: generateDocumentNo(true, docDeptTitle[body.type], matches, docNo),
             }
         }
 

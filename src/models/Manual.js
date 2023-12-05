@@ -11,9 +11,11 @@ const schema = new Schema(
         revisedDate: { type: "Date", required: true },
         dueDate: { type: "Date", required: true },
         versionNumber: { type: "String", required: true },
+        previousVersions: [{ type: "String" }],
         file: [{type: 'String'}],
         dept: { type: "String", required: true },
         operator: idAndNameSchemaRequired,
+        documentNo: { type: "String", required: true, unique: true },
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
