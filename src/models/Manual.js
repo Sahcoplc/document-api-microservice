@@ -12,7 +12,7 @@ const schema = new Schema(
         dueDate: { type: "Date", required: true },
         versionNumber: { type: "String", required: true },
         previousVersions: [{ type: "String" }],
-        file: [{type: 'String'}],
+        attachments: [{type: 'String'}],
         dept: { type: "String", required: true },
         operator: idAndNameSchemaRequired,
         documentNo: { type: "String", required: true, unique: true },
