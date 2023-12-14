@@ -24,7 +24,7 @@ paginator.paginate.options = { lean: true, leanWithId: false };
 const {
   NODE_ENV,
   SESSION_SECRET,
-  FLIGHT_DB_URL: DATABASE_URL,
+  DATABASE_URL,
   SESSION_DB_NAME,
   SESSION_DB_COLLECTION,
 } = process.env;
