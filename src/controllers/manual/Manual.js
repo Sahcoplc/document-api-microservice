@@ -1,6 +1,6 @@
-import Manual from "../../models/Manual";
-import { error, success } from "../../helpers/response";
-import asyncWrapper from "../../middlewares/async";
+import Manual from "../../models/Manual.js";
+import { error, success } from "../../helpers/response.js";
+import asyncWrapper from "../../middlewares/async.js";
 
 export const uploadManual = asyncWrapper(async (req, res) => {
     try {

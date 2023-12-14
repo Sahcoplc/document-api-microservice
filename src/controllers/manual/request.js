@@ -1,9 +1,9 @@
 import Joi from "joi"
-import { error } from "../../helpers/response";
-import asyncWrapper from "../../middlewares/async";
-import { uploadFiles } from "../../services/storage";
-import Manual from "../../models/Manual";
-import { generateDocumentNo } from "../../controllers/document/helper";
+import { error } from "../../helpers/response.js";
+import asyncWrapper from "../../middlewares/async.js";
+import { uploadFiles } from "../../services/storage.js";
+import Manual from "../../models/Manual.js";
+import { generateDocumentNo } from "../../controllers/document/helper.js";
 
 export const uploadManualSchema = Joi.object({
     title: Joi.string().required(),
@@ -13,10 +13,21 @@ export const uploadManualSchema = Joi.object({
     attachments: Joi.any().required()
 })
 
+export const fetchManualSchema = Joi.object({
+    title: Joi.string(),
+    dueDate: Joi.date(),
+    issuedDate: Joi.date(),
+    deptId: Joi.string(),
+    page: Joi.number().required(),
+    limit: Joi.number(),
+    startDate: Joi.date(),
+    endDate: Joi.date().greater(Joi.ref("startDate")),
+})
+
 export const validateUploadManual = asyncWrapper(async (req, res, next) => {
     try {
 
-        const { user: { _id, fullName, department: { name } }, body } = req
+        const { user: { _id, fullName, department: { _id: deptId } }, body } = req
         // Upload files attached to AWS SE storage
 
         if (body.attachments) body.attachments = await uploadFiles(body.attachments, 'manuals')
@@ -47,7 +58,7 @@ export const validateUploadManual = asyncWrapper(async (req, res, next) => {
             ...req.locals,
             manual: {
                 ...body,
-                dept: name,
+                deptId,
                 operator: { _id, name: fullName },
                 documentNo: generateDocumentNo(false, docDeptTitle[body.title], matches, docNo),
                 previousVersions,

@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import paginator from "mongoose-paginate-v2";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import { idAndNameSchemaRequired } from "base/request";
+import { idAndNameSchemaRequired } from "../base/request.js";
 
 
 const schema = new Schema(
@@ -13,7 +13,7 @@ const schema = new Schema(
         versionNumber: { type: "String", required: true },
         previousVersions: [{ type: "String" }],
         attachments: [{type: 'String'}],
-        dept: { type: "String", required: true },
+        deptId: { type: "String", required: true },
         operator: idAndNameSchemaRequired,
         documentNo: { type: "String", required: true, unique: true },
     },

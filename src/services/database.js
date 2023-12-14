@@ -7,7 +7,7 @@ dotenv.config()
 const memoryServer = await MongoMemoryServer.create();
 mongoose.set('strictQuery', false);
 
-const { FLIGHT_DB_URL: DATABASE_URL, FLIGHT_DB_NAME } = process.env
+const { DATABASE_URL, FLIGHT_DB_NAME } = process.env
 /**
  * Connect to database
 */
