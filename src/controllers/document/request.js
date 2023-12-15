@@ -206,6 +206,7 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
 
         return next()
     } catch (e) {
+        console.log('VVRR::: ', {e})
         return error(res, 500, e)
     }
 })

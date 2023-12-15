@@ -21,6 +21,7 @@ class DocumentController {
             return success(res, 201, doc)
 
         } catch (e) {
+            console.log('FRRRR::: ', {e})
             return error(res, 500, e)
         }
     })
@@ -57,6 +58,7 @@ class DocumentController {
             return success(res, 200, documents)
 
         } catch (e) {
+            console.log('ERRRR::: ', {e})
             return error(res, 500, e)
         }
     })

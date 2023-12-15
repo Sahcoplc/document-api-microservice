@@ -15,7 +15,7 @@ const options = {
 
 export const rateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 20, // Limit each IP to 20 requests per `window` (here, per 15 minutes)
+    max: 100, // Limit each IP to 20 requests per `window` (here, per 15 minutes)
     message: 'Too many requests created from this IP, please try again after an hour',
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers

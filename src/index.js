@@ -2,17 +2,13 @@
 import { connectDB } from "./services/database.js"
 import server from "./server.js"
 
-let { PORT } = process.env
+const { PORT } = process.env
 
 const serverStart = async () => {
     try {
         // Open MongoDB Connection
 
         await connectDB()
-
-        if (PORT == '' || PORT == null) {
-            PORT = 8037
-        }
 
         server.listen(PORT, ()=> {
             console.log(`Server is running on port ${PORT}`)
