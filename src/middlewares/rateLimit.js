@@ -2,7 +2,7 @@ import toobusy from 'toobusy-js';
 import rateLimit from 'express-rate-limit';
 import MongoStore from "rate-limit-mongo";
 
-const { DATABASE_URL, SESSION_DB_NAME, SESSION_DB_COLLECTION } = process.env;
+const { DATABASE_URL, SESSION_DB_NAME, SESSION_DB_COLLECTION, NODE_ENV } = process.env;
 
 const options = {
     uri: DATABASE_URL,
@@ -23,7 +23,7 @@ export const rateLimiter = rateLimit({
 })
 
 export const apiBusy = (req, res, next) => {
-    if (toobusy()) {
+    if (NODE_ENV !== 'test' && toobusy()) {
         res.status(503).send("Server Too Busy");
     } else {
         next();
