@@ -1,10 +1,10 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
+// import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config()
 
-const memoryServer = await MongoMemoryServer.create();
+// const memoryServer = await MongoMemoryServer.create();
 mongoose.set('strictQuery', false);
 
 const { DATABASE_URL, FLIGHT_DB_NAME } = process.env
@@ -25,10 +25,10 @@ export const connect = async (uri, dbName) => {
 /**
  * Connect to test database
  */
-export const connectTestDB = async () => {
-    const uri = await memoryServer.getUri();
-    connect(uri, FLIGHT_DB_NAME);
-};
+// export const connectTestDB = async () => {
+//     const uri = await memoryServer.getUri();
+//     connect(uri, FLIGHT_DB_NAME);
+// };
 
 /**
  * Connect to other databases depending on environment
@@ -59,6 +59,6 @@ export const truncate = async () => {
     }
 };
 
-export const startMemoryServer = () => memoryServer.ensureInstance();
-export const stopMemoryServer = () => memoryServer.stop();
-export const getConnectionString = () => memoryServer.getUri();
+// export const startMemoryServer = () => memoryServer.ensureInstance();
+// export const stopMemoryServer = () => memoryServer.stop();
+// export const getConnectionString = () => memoryServer.getUri();

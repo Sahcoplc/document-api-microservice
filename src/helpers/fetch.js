@@ -54,7 +54,7 @@ export const getPermission = async (id, apiKey) => {
 export const getEmployee = async (apiKey, id) => {
 
     try {
-        const { data } = await instance.get(`/employee/${id}`, {
+        const { data } = await instance.get(`/employees/${id}`, {
             headers: {
                 "X-SAHCOAPI-KEY": apiKey
             }

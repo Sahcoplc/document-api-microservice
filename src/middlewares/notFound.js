@@ -4,6 +4,7 @@
  * @param {*} res 
  */
 const notFound = (req, res) => {
+  console.log('ORIG:: ', req.originalUrl)
     res.status(404).send({
       // eslint-disable-next-line max-len
       message: `OOPs!! Server can't find ${req.originalUrl}.This could be a typographical issue.Check the API specification for further guidance`,
