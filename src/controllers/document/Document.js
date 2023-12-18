@@ -65,7 +65,7 @@ class DocumentController {
 
     approveDocument = asyncWrapper(async (req, res) => {
         try {
-            const { locals: { approvalRequest }, query: { id, movementId }, user: { apiKey, fullName, department: { name }, _id } } = req
+            const { locals: { approvalRequest }, query: { id, movementId }, user: { apiKey, fullName, department: { name } } } = req
 
             let approval = null
             const session = await startSession()
@@ -75,7 +75,6 @@ class DocumentController {
                 const notify = {
                     title: 'Document Approval',
                     body: `${fullName} from ${name} has ${approvalRequest.status} your document`,
-                    sender: _id,
                     receiver: approval.operator._id,
                     isAll: false
                 }

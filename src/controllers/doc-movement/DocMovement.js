@@ -17,7 +17,6 @@ class DocumentMovementControl {
             const notify = {
                 title: 'Approval Request',
                 body: `${movement.from.name} from ${movement.from.dept} has sent a document`,
-                sender: movement.from._id,
                 receiver: movement.to._id,
                 isAll: false
             }
