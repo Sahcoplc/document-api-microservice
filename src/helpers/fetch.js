@@ -68,7 +68,7 @@ export const getEmployee = async (apiKey, id) => {
 
 export const sendNotification = async (apiKey, body) => {
     try {
-        const { data } = await instance.post(`/alert/new`, body, {
+        const { data } = await instance.post(`/alerts/new`, body, {
             headers: {
                 "X-SAHCOAPI-KEY": apiKey
             }
