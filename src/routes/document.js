@@ -13,5 +13,6 @@ router.post('/new', validator.body(createDocumentSchema), uploadImage.array('att
 router.patch('/:id', validator.params(idSchema), validator.body(createDocumentSchema), uploadImage.array('attachments'), validateUpdateDocument, docController.updateDocument)
 router.get('/mine', validator.query(filterDocSchema), docController.fetchMyDocuments)
 router.patch('/approve/:id/:movementId', validator.params(approveIdsSchema), validator.body(approveDocSchema), isAuthorized(['super-edit', 'approve-document'], [], []), validateApproveDocument, docController.approveDocument)
+router.get('/:id', validator.params(idSchema), docController.fetchSingleDocument)
 
 export default router;

@@ -21,7 +21,6 @@ class DocumentController {
             return success(res, 201, doc)
 
         } catch (e) {
-            console.log('FRRRR::: ', {e})
             return error(res, 500, e)
         }
     })
@@ -58,7 +57,18 @@ class DocumentController {
             return success(res, 200, documents)
 
         } catch (e) {
-            console.log('ERRRR::: ', {e})
+            return error(res, 500, e)
+        }
+    })
+
+    fetchSingleDocument = asyncWrapper(async (req, res) => {
+        try {
+            const { params: { id } } = req
+
+            const document = await Document.findById({ _id: id }).lean()
+            
+            return success(res, 200, document)
+        } catch (e) {
             return error(res, 500, e)
         }
     })
