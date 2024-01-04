@@ -14,7 +14,7 @@ export const generateMovementFilter = (query) => {
 
     if (query.sentByMe) {
         delete filter['to._id']
-        filter = { ...filter, status: documentMovementStatus.completed, 'from._id': query._id }
+        filter = { ...filter, status: { $in: Object.values(documentMovementStatus) }, 'from._id': query._id }
     }
 
     if (query.startDate) {
