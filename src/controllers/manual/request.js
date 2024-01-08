@@ -27,7 +27,7 @@ export const fetchManualSchema = Joi.object({
 export const validateUploadManual = asyncWrapper(async (req, res, next) => {
     try {
 
-        const { user: { _id, fullName, department: { _id: deptId } }, body } = req
+        const { user: { _id, fullName, department: { _id: deptId, name } }, body } = req
         // Upload files attached to AWS SE storage
 
         if (body.attachments) body.attachments = await uploadFiles(body.attachments, 'manuals')
@@ -58,9 +58,12 @@ export const validateUploadManual = asyncWrapper(async (req, res, next) => {
             ...req.locals,
             manual: {
                 ...body,
+                issuedDate: new Date(body.issuedDate),
+                revisedDate: new Date(body.revisedDate),
+                dueDate: new Date(body.dueDate),
                 deptId,
                 operator: { _id, name: fullName },
-                documentNo: generateDocumentNo(false, docDeptTitle[body.title], matches, docNo),
+                documentNo: generateDocumentNo(false, name.match(/\b(\w)/g).join(''), matches, docNo),
                 previousVersions,
                 versionNumber
             }
