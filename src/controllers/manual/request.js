@@ -65,7 +65,7 @@ export const validateUploadManual = asyncWrapper(async (req, res, next) => {
                 operator: { _id, name: fullName },
                 documentNo: generateDocumentNo(false, name.match(/\b(\w)/g).join(''), matches, docNo),
                 previousVersions,
-                versionNumber
+                versionNumber: `${versionNumber}.0`
             }
         }
 
