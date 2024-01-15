@@ -38,9 +38,9 @@ export const fetch = asyncWrapper(async (req, res) => {
 
 export const fetchSingleManual = asyncWrapper(async (req, res) => {
     try {
-        const { user: { department: { _id: deptId } }, params: { _id } } = req
+        const { user: { department: { _id: deptId } }, params: { id } } = req
 
-        const manual = await Manual.findOne({ _id, deptId }).lean()
+        const manual = await Manual.findOne({ _id: id, deptId }).lean()
 
         return success(res, 200, manual)
     } catch (e) {
