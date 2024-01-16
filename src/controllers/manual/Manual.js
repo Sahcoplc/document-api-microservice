@@ -22,7 +22,6 @@ export const fetch = asyncWrapper(async (req, res) => {
         const { user: { department: { _id } }, query: { page, limit } } = req
     
         const filter = generateFilter({ ...req.query, deptId: _id })
-        console.log({filter})
 
         const modelName = "Manual"
 

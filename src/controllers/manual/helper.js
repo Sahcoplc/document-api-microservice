@@ -1,5 +1,5 @@
 export const generateFilter = (query) => {
-    const filter = { deptId: query.deptId }
+    let filter = { deptId: query.deptId }
 
     if (query.title) {
         const regex = new RegExp(`${query.title}`, 'i');
