@@ -56,6 +56,7 @@ const expenseVoucher = {
     }).required()
 }
 
+
 const cashAdvanceRetirement = {
     payeeName: Joi.string().required(),
     department: Joi.string().required(),
@@ -97,6 +98,31 @@ const allowanceExpenses = {
         _id: Joi.string().required(),
         name: Joi.string().required()
     }).required() 
+}
+//
+
+const facilitiesRepair = {
+    staffId: Joi.string().required(),
+    officeLocation: Joi.string().required(),
+    requestBySign:Joi.object({
+        _id: Joi.string().required(),
+        name: Joi.string().required()
+    }).required(),
+    loacationOfRepair: Joi.string().required(),
+    natureOfFault: Joi.string().required(),
+    descriptionOfWork: Joi.string().required(),
+    facilitiesInspectorSign:Joi.object({
+        _id: Joi.string().required(),
+        name: Joi.string().required()
+    }).required(),
+    tradesInvolved: Joi.object({
+        carpenter: Joi.string(),
+        plumber: Joi.string(),
+        electrician: Joi.string(),
+        airConditionerRepairer: Joi.string(),
+        painter: Joi.string(),
+        welder: Joi.string(),
+    })
 }
 
 export const createDocumentSchema = Joi.object({
@@ -143,6 +169,12 @@ export const createDocumentSchema = Joi.object({
                 is: documentTypes.allowanceExpensesClaims,
                 then: Joi.object({
                     ...allowanceExpenses
+                })
+            },
+            {
+                is: documentTypes.facilitiesRepair,
+                then: Joi.object({
+                    ...facilitiesRepair
                 })
             }
         ]
