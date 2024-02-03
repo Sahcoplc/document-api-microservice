@@ -102,9 +102,7 @@ const allowanceExpenses = {
 //
 
 const facilitiesRepair = {
-    department: Joi.string().required(),
     staffId: Joi.string().required(),
-    requestByName: Joi.string().required(),
     officeLocation: Joi.string().required(),
     requestBySign:Joi.object({
         _id: Joi.string().required(),
@@ -113,25 +111,18 @@ const facilitiesRepair = {
     loacationOfRepair: Joi.string().required(),
     natureOfFault: Joi.string().required(),
     descriptionOfWork: Joi.string().required(),
-    facilitiesInspectorName: Joi.string().required(),
-    date: Joi.date(),
-    staffId: Joi.string().required(),
     facilitiesInspectorSign:Joi.object({
         _id: Joi.string().required(),
         name: Joi.string().required()
     }).required(),
-    tradesInvolved: Joi.array().items(
-        Joi.object({
-            carpenter: Joi.string().required(),
-            plumber: Joi.string().required(),
-            electrician: Joi.string().required(),
-            airConditionerRepairer: Joi.string().required(),
-            painter: Joi.string().required(),
-            welder: Joi.string().required(),
-        })
-    ).required(),
-    amountInvolved:Joi.number()
-
+    tradesInvolved: Joi.object({
+        carpenter: Joi.string(),
+        plumber: Joi.string(),
+        electrician: Joi.string(),
+        airConditionerRepairer: Joi.string(),
+        painter: Joi.string(),
+        welder: Joi.string(),
+    })
 }
 
 export const createDocumentSchema = Joi.object({
