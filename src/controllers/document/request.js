@@ -104,17 +104,17 @@ const allowanceExpenses = {
 const facilitiesRepair = {
     staffId: Joi.string().required(),
     officeLocation: Joi.string().required(),
-    requestBySign:Joi.object({
+    requestBySign: Joi.object({
         _id: Joi.string().required(),
         name: Joi.string().required()
     }).required(),
     loacationOfRepair: Joi.string().required(),
     natureOfFault: Joi.string().required(),
     descriptionOfWork: Joi.string().required(),
-    facilitiesInspectorSign:Joi.object({
-        _id: Joi.string().required(),
-        name: Joi.string().required()
-    }).required(),
+    facilitiesInspectorSign: Joi.object({
+        _id: Joi.string(),
+        name: Joi.string()
+    }),
     tradesInvolved: Joi.object({
         carpenter: Joi.string(),
         plumber: Joi.string(),
