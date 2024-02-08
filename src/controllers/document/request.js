@@ -108,7 +108,7 @@ const facilitiesRepair = {
         _id: Joi.string().required(),
         name: Joi.string().required()
     }).required(),
-    loacationOfRepair: Joi.string().required(),
+    locationOfRepair: Joi.string().required(),
     natureOfFault: Joi.string().required(),
     descriptionOfWork: Joi.string().required(),
     facilitiesInspectorSign: Joi.object({
