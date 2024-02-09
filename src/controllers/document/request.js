@@ -58,6 +58,7 @@ const expenseVoucher = {
 
 
 const cashAdvanceRetirement = {
+    staffId: Joi.string().required(),
     payeeName: Joi.string().required(),
     department: Joi.string().required(),
     items: Joi.array().items(
