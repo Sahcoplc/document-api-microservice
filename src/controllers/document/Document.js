@@ -113,4 +113,27 @@ class DocumentController {
     })
 }
 
+// Get dcoument statistics
+export const getStats = asyncWrapper(async (req, res) => {
+    try {
+        const { user: { id } } = req;
+    
+         
+       const totalCount = await Document.countDocuments({_id: id}).exec();
+
+       const totalSent = await DocumentMovement.countDocuments({'from._id' : _id}).exec();
+
+       const totalReceived = await DocumentMovement.countDocuments({'to._id' : _id}).exec()
+
+
+       return success(res, 200, totalCount, totalSent, totalReceived)
+
+          
+    } catch (e) {
+        return error(res, 500, e);
+    }
+
+})
+
+
 export default DocumentController
