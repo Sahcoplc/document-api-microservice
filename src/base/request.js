@@ -36,7 +36,7 @@ export const documentTypes = {
     facilitiesRepair: "FACILITIES REPAIR/MAINTENANCE REQUEST FORM",
     cashAdvanceRetirement: "CASH ADVANCE REQUIREMENT VOUCHER",
     allowanceExpensesClaims: "ALLOWANCES AND EXPENSES CLAIMS REINBURSEMENT/RETIREMENT",
-    memo: "MEMO"
+    memo: "INTERNAL MEMO"
 }
 
 export const docDeptTitle = {

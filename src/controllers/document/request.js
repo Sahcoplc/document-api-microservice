@@ -144,7 +144,9 @@ const memoDoc = {
     signedBy: Joi.object({
         _id: Joi.string().required(),
         name: Joi.string().required()
-    }).required()
+    }).required(),
+    isAllStaff: Joi.boolean(),
+    receivingDepts: Joi.array().items(Joi.string())
 }
 
 export const createDocumentSchema = Joi.object({
