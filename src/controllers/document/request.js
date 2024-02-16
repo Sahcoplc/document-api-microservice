@@ -56,7 +56,6 @@ const expenseVoucher = {
     }).required()
 }
 
-
 const cashAdvanceRetirement = {
     staffId: Joi.string().required(),
     payeeName: Joi.string().required(),
@@ -100,7 +99,6 @@ const allowanceExpenses = {
         name: Joi.string().required()
     }).required() 
 }
-//
 
 const facilitiesRepair = {
     staffId: Joi.string().required(),
@@ -124,6 +122,29 @@ const facilitiesRepair = {
         painter: Joi.string(),
         welder: Joi.string(),
     })
+}
+
+const memoDoc = {
+    from: Joi.object({
+        _id: Joi.string().required(),
+        name: Joi.string().required()
+    }).required(),
+    to: Joi.object({
+        _id: Joi.string().required(),
+        name: Joi.string().required()
+    }).required(),
+    copiedReceivers: Joi.array().items(
+        Joi.object({
+            _id: Joi.string().required(),
+            name: Joi.string().required()
+        })
+    ),
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+    signedBy: Joi.object({
+        _id: Joi.string().required(),
+        name: Joi.string().required()
+    }).required()
 }
 
 export const createDocumentSchema = Joi.object({
@@ -176,6 +197,12 @@ export const createDocumentSchema = Joi.object({
                 is: documentTypes.facilitiesRepair,
                 then: Joi.object({
                     ...facilitiesRepair
+                })
+            },
+            {
+                is: documentTypes.memo,
+                then: Joi.object({
+                    ...memoDoc
                 })
             }
         ]
