@@ -1,5 +1,4 @@
 import Joi from 'joi'
-import { Types } from 'mongoose'
 import asyncWrapper from '../../middlewares/async.js'
 import { error } from '../../helpers/response.js'
 import Document from '../../models/Document.js'
@@ -7,8 +6,6 @@ import BadRequest from '../../utils/errors/badRequest.js'
 import { documentMovementPurpose, documentMovementStatus, documentTypes } from '../../base/request.js'
 import { getEmployee } from '../../helpers/fetch.js'
 import DocumentMovement from '../../models/DocumentMovement.js'
-
-const { ObjectId } = Types
 
 export const createDocMovementSchema = Joi.object({
     purpose: Joi.string().valid(...Object.values(documentMovementPurpose)).required(),
