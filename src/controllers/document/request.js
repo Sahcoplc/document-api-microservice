@@ -253,6 +253,8 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
             docNo = `00${no}`
         }
 
+        const docDept = body.type === documentTypes.memo ? deptName.match(/\b(\w)/g).join('') : docDeptTitle[body.type]
+
         req.locals = {
             ...req.locals,
             document: {
@@ -262,7 +264,7 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
                 parentStation: parent ? stationId : parentStation._id,
                 station: { name: code, _id: stationId },
                 department: { name: deptName, subDept },
-                documentNo: generateDocumentNo(true, docDeptTitle[body.type], matches, docNo),
+                documentNo: generateDocumentNo(true, docDept, matches, docNo),
             }
         }
 
