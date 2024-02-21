@@ -2,6 +2,7 @@ import { Router } from "express";
 import docRoutes from "./document.js"
 import moveRoutes from "./docMovement.js"
 import manualRoutes from './manual.js'
+import statsRouter from './stats.js'
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.get("/", (req, res) => {
 router.use('/doc', docRoutes)
 router.use('/transfer', moveRoutes)
 router.use('/manual', manualRoutes)
+router.use('/stats', statsRouter)
 
 export default router;
