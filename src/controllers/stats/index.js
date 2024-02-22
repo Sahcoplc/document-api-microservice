@@ -21,9 +21,9 @@ export const getDocumentStats = asyncWrapper(async (req, res) => {
         for (const doc of docs) {
             const { approvalTrail } = doc
             const lastApproval = approvalTrail[approvalTrail.length - 1]
-            const isApproved = lastApproval.isApproved && lastApproval.status === approvalStatus.approved
-            const isPending = !lastApproval.isApproved && lastApproval.status === approvalStatus.pending
-            const isDeclined = !lastApproval.isApproved && lastApproval.status === approvalStatus.declined
+            const isApproved = lastApproval && lastApproval.isApproved && lastApproval.status === approvalStatus.approved
+            const isPending = lastApproval && !lastApproval.isApproved && lastApproval.status === approvalStatus.pending
+            const isDeclined = lastApproval && !lastApproval.isApproved && lastApproval.status === approvalStatus.declined
             
             if (isApproved) approvalsCount.noOfApprovedDocs += 1
             if (isPending) approvalsCount.noOfPendingDocs += 1
