@@ -7,7 +7,7 @@ dotenv.config()
 // const memoryServer = await MongoMemoryServer.create();
 mongoose.set('strictQuery', false);
 
-const { DATABASE_URL, FLIGHT_DB_NAME } = process.env
+const { DATABASE_URL, DATABASE_NAME } = process.env
 /**
  * Connect to database
 */
@@ -33,7 +33,7 @@ export const connect = async (uri, dbName) => {
 /**
  * Connect to other databases depending on environment
  */
-export const connectDB = async (dbName = FLIGHT_DB_NAME) => {
+export const connectDB = async (dbName = DATABASE_NAME) => {
     await connect(DATABASE_URL, dbName);
 };
 

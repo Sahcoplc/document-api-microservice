@@ -6,99 +6,34 @@ import { approvalStatus } from "../../base/request.js";
 
 export const getDocumentStats = asyncWrapper(async (req, res) => {
     try {
-        const { user: { _id, department: { _id: deptId } } } = req
+        const { user: { _id } } = req;
 
-        const staffDocs = await Document.aggregate([
-            {
-                $match: { "operator._id": _id }
-            },
-            {
-                $group: {
-                    _id: null,
-                    totalDocuments: { $sum: 1 }, // Count of all user documents
-                    noOfApprovedDocs: {
-                        $sum: {
-                            $cond: {
-                                if: {
-                                    $eq: [
-                                        { $arrayElemAt: ["$approvalTrail.isApproved", -1] },
-                                        true,
-                                    ],
-                                },
-                                then: 1,
-                                else: 0,
-                            },
-                        },
-                    },
-                    noOfPendingApprovalDocs: {
-                        $sum: {
-                            $cond: {
-                                if: {
-                                    $eq: [
-                                    { $arrayElemAt: ["$approvalTrail.status", -1] },
-                                    approvalStatus.pending,
-                                    ],
-                                },
-                                then: 1,
-                                else: 0,
-                            },
-                        },
-                    },
-                    noOfRejectedDocs: {
-                        $sum: {
-                            $cond: {
-                                if: {
-                                    $eq: [
-                                    { $arrayElemAt: ["$approvalTrail.status", -1] },
-                                    approvalStatus.declined,
-                                    ],
-                                },
-                                then: 1,
-                                else: 0,
-                            },
-                        },
-                    },
-                },
-            },
-            {
-                $project: {
-                    _id: 0,
-                    totalDocuments: 1,
-                    noOfApprovedDocs: 1,
-                    noOfPendingApprovalDocs: 1,
-                    noOfRejectedDocs: 1
-                }
-            }
-        ])
+        const noOfReceivedDocs = await DocumentMovement.countDocuments({ "to._id": _id }).exec()
+        const noOfSentDocs = await DocumentMovement.countDocuments({ "from._id": _id }).exec()
+        const docs = await Document.find({ "operator._id": _id }).lean()
+        const noOfStaffDocs = docs.length
+        const approvalsCount = {
+            noOfApprovedDocs: 0,
+            noOfPendingDocs: 0,
+            noOfDeclinedDocs: 0
+        }
 
-        const movedDocs = await DocumentMovement.aggregate([
-            { 
-                $match: { "from._id": _id }
-            },
-            {
-                $group: {
-                    _id: null,
-                    noOfSentDocs: { $sum: 1 }
-                }
-            },
-            {
-                $project: {
-                    noOfSentDocs: 1
-                }
-            }
-        ])
+        for (const doc of docs) {
+            const { approvalTrail } = doc
+            const lastApproval = approvalTrail[approvalTrail.length - 1]
+            const isApproved = lastApproval.isApproved && lastApproval.status === approvalStatus.approved
+            const isPending = !lastApproval.isApproved && lastApproval.status === approvalStatus.pending
+            const isDeclined = !lastApproval.isApproved && lastApproval.status === approvalStatus.declined
+            
+            if (isApproved) approvalsCount.noOfApprovedDocs += 1
+            if (isPending) approvalsCount.noOfPendingDocs += 1
+            if (isDeclined) approvalsCount.noOfDeclinedDocs += 1
+        }
 
-        const noOfReceivedDocs = await DocumentMovement.find({ "to._id": _id }).countDocuments()
-
-        console.log({staffDocs, movedDocs})
-
-        const result = { staffDocs, noOfSentDocs: movedDocs, noOfReceivedDocs }
-
-        console.log({result})
+        const result = { noOfStaffDocs, noOfSentDocs, noOfReceivedDocs, approvalsCount }
 
         return success(res, 200, result)
     } catch (e) {
-        console.log('ERR:: ', e)
         return error(res, 500, e)
     }
 })
