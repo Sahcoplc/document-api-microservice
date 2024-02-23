@@ -7,7 +7,6 @@ export const isAuthorized = (requiredPermissions = [], requiredLocations = [], r
       const { currentStation: { parent },permissions: { isController, actions, stations, departments, modules } } = req.user;
 
       const module = modules.find((module) => module.section === "sahco-docs")
-      console.log({actions, departments, stations, module})
       
       if (actions.length === 0 || stations.length === 0 || departments.length === 0 || !module) {
         return error(res, 401, "You are not authorized")
