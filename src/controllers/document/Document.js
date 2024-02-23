@@ -97,7 +97,7 @@ class DocumentController {
 
             await sendNotification(apiKey, notify)
 
-            await sendMail({
+            sendMail({
                 email: data.companyEmail,
                 subject: "DOCUMENT APPROVAL",
                 body: documentApproval({
@@ -109,6 +109,7 @@ class DocumentController {
                     status: approvalRequest.status
                 })
             })
+            console.log({approval})
 
             return success(res, 200, approval)
         } catch (e) {
