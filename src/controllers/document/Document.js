@@ -109,7 +109,6 @@ class DocumentController {
             //         status: approvalRequest.status
             //     })
             // })
-            console.log({approval})
 
             return success(res, 200, approval)
         } catch (e) {
