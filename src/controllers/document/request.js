@@ -318,7 +318,10 @@ export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
             ...body
         }
         trail.push(approvalRequest)
-        req.locals.approvalRequest = trail
+        req.locals = {
+            ...req.locals,
+            approvalRequest: trail
+        }
 
         return next()
     } catch (e) {
