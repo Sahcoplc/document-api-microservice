@@ -97,23 +97,22 @@ class DocumentController {
 
             await sendNotification(apiKey, notify)
 
-            sendMail({
-                email: data.companyEmail,
-                subject: "DOCUMENT APPROVAL",
-                body: documentApproval({
-                    title: "DOCUMENT APPROVAL",
-                    name: approval.name,
-                    department: transfer.to.dept,
-                    senderName: transfer.to.name,
-                    documentType: transfer.type,
-                    status: approvalRequest.status
-                })
-            })
+            // await sendMail({
+            //     email: data.companyEmail,
+            //     subject: "DOCUMENT APPROVAL",
+            //     body: documentApproval({
+            //         title: "DOCUMENT APPROVAL",
+            //         name: approval.name,
+            //         department: transfer.to.dept,
+            //         senderName: transfer.to.name,
+            //         documentType: transfer.type,
+            //         status: approvalRequest.status
+            //     })
+            // })
             console.log({approval})
 
             return success(res, 200, approval)
         } catch (e) {
-            console.log('ERR:: ', e)
             return error(res, 500, e)
         }
     })
