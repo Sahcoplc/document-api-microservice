@@ -1,7 +1,7 @@
 import { fancyDateNoTime } from "../utils/index.js";
 
 /* eslint-disable max-len */
-const documentApproval = ({ title, name, documentType, department, senderName }) => 
+const documentApproval = ({ title, name, documentType, department, senderName, status }) => 
 `<!DOCTYPE html>
 
     <head>

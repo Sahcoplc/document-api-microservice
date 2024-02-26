@@ -75,36 +75,40 @@ class DocumentController {
 
     approveDocument = asyncWrapper(async (req, res) => {
         try {
-            const { locals: { approvalRequest }, query: { id, movementId }, user: { apiKey, fullName, department: { name } } } = req
+            const { locals: { approvalRequest }, params: { id, movementId }, user: { apiKey, fullName, department: { name } } } = req
 
             let approval = null
+            let transfer = null
             const session = await startSession()
             await session.withTransaction(async () => {
                 approval = await Document.findByIdAndUpdate({ _id: id }, { $set: { approvalTrail: approvalRequest }}, { new: true, session })
-                const transfer = await DocumentMovement.findByIdAndUpdate({ _id: movementId }, { $set: { status: documentMovementStatus.completed }}, { new: true, session })
-                const notify = {
-                    title: 'Document Approval',
-                    body: `${fullName} from ${name} has ${approvalRequest.status} your document`,
-                    receiver: approval.operator._id,
-                    isAll: false
-                }
-                const { data } = await getEmployee(apiKey, approval.operator._id)
-    
-                await sendNotification(apiKey, notify)
-                await sendMail({
-                    email: data.companyEmail,
-                    subject: "DOCUMENT APPROVAL",
-                    body: documentApproval({
-                        title: "DOCUMENT APPROVAL",
-                        name: approval.name,
-                        department: transfer.to.dept,
-                        senderName: transfer.to.name,
-                        documentType: transfer.type
-                    })
-                })
+                transfer = await DocumentMovement.findByIdAndUpdate({ _id: movementId }, { $set: { status: documentMovementStatus.completed }}, { new: true, session })
             })
-
             session.endSession()
+
+            const notify = {
+                title: 'Document Approval',
+                body: `${fullName} from ${name} has ${approvalRequest.status} your document`,
+                receiver: approval.operator._id,
+                isAll: false
+            }
+
+            const { data } = await getEmployee(apiKey, approval.operator._id)
+
+            await sendNotification(apiKey, notify)
+
+            // await sendMail({
+            //     email: data.companyEmail,
+            //     subject: "DOCUMENT APPROVAL",
+            //     body: documentApproval({
+            //         title: "DOCUMENT APPROVAL",
+            //         name: approval.name,
+            //         department: transfer.to.dept,
+            //         senderName: transfer.to.name,
+            //         documentType: transfer.type,
+            //         status: approvalRequest.status
+            //     })
+            // })
 
             return success(res, 200, approval)
         } catch (e) {
