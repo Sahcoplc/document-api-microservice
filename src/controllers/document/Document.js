@@ -1,4 +1,4 @@
-import { sendMail } from "../../services/mail.js"
+// import { sendMail } from "../../services/mail.js"
 import { paginate } from "../../helpers/paginate.js"
 import { error, success } from "../../helpers/response.js"
 import asyncWrapper from "../../middlewares/async.js"
@@ -7,7 +7,7 @@ import DocumentMovement from "../../models/DocumentMovement.js"
 import { generateFilter } from "./helper.js"
 import { getEmployee, sendNotification } from "../../helpers/fetch.js"
 import { startSession } from 'mongoose'
-import documentApproval from "../../mails/document-approval.js"
+// import documentApproval from "../../mails/document-approval.js"
 import { documentMovementStatus } from "../../base/request.js"
 
 class DocumentController {
