@@ -3,7 +3,8 @@ import Joi from "joi"
 
 export const openRoutes = [
     { method: "GET", path: "/" },
-    { method: "GET", path: "/api"}
+    { method: "GET", path: "/api"},
+    { method: "PATCH", path: "/manual/update-status"}
 ]
 
 export const validator = createValidator()

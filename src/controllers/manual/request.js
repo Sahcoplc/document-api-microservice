@@ -110,7 +110,7 @@ export const validateExpiredManualsOrCertifications = asyncWrapper(async (req, r
         }
         const manualsToExpire = await Manual.find(filter).select('documentNo').lean()
 
-        if (!manualsToExpire.length) throw new createCustomError('No manuals or certicates expiring soon', 404)
+        if (!manualsToExpire.length) throw createCustomError('No manuals or certicates expiring soon', 404)
 
         req.locals = {
             ...req.locals,
