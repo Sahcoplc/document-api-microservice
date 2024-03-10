@@ -56,7 +56,6 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
         await Promise.all(
             manualsToExpire.map(async manual => {
                 const doc = await Manual.findOneAndUpdate({ documentNo: manual.documentNo }, { $set: { status: manualStatus.expired } }, { new: true })
-                console.log({doc})
                 manuals.push(doc.documentNo)
             })
         )

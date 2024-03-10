@@ -10,16 +10,25 @@ import { createCustomError } from "../../utils/errors/customError.js";
 export const uploadManualSchema = Joi.object({
     title: Joi.string().required(),
     type: Joi.string().valid(documentTypes.manual, documentTypes.cert).required(),
-    revisedDate: Joi.date(),
-    renewalDate: Joi.date(),
+    revisedDate: Joi.date().when('type', {
+        is: documentTypes.manual,
+        then: Joi.required()
+    }),
+    renewalDate: Joi.date().when('type', {
+        is: documentTypes.cert,
+        then: Joi.required()
+    }),
     issuedDate: Joi.date().required(),
-    dueDate: Joi.date(),
+    dueDate: Joi.date().when('type', {
+        is: documentTypes.manual,
+        then: Joi.required()
+    }),
     attachments: Joi.any().required()
 })
 
 export const fetchManualSchema = Joi.object({
     title: Joi.string(),
-    type: Joi.string(),
+    type: Joi.string().valid(documentTypes.manual, documentTypes.cert).required(),
     dueDate: Joi.date(),
     issuedDate: Joi.date(),
     renewalDate: Joi.date(),
@@ -102,8 +111,6 @@ export const validateExpiredManualsOrCertifications = asyncWrapper(async (req, r
         const manualsToExpire = await Manual.find(filter).select('documentNo').lean()
 
         if (!manualsToExpire.length) throw new createCustomError('No manuals or certicates expiring soon', 404)
-
-        console.log({manualsToExpire})
 
         req.locals = {
             ...req.locals,
