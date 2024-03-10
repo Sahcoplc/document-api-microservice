@@ -36,7 +36,9 @@ export const documentTypes = {
     facilitiesRepair: "FACILITIES REPAIR/MAINTENANCE REQUEST FORM",
     cashAdvanceRetirement: "CASH ADVANCE REQUIREMENT VOUCHER",
     allowanceExpensesClaims: "ALLOWANCES AND EXPENSES CLAIMS REINBURSEMENT/RETIREMENT",
-    memo: "INTERNAL MEMO"
+    memo: "INTERNAL MEMO",
+    cert: "CERTIFICATION",
+    manual: "MANUAL"
 }
 
 export const docDeptTitle = {
@@ -57,4 +59,10 @@ export const documentMovementPurpose = {
 export const documentMovementStatus = {
     pending: 'PENDING',
     completed: 'COMPLETED'
+}
+
+export const manualStatus = {
+    active: "ACTIVE",
+    expired: "EXPIRED",
+    expireSoon: "ABOUT TO EXPIRE"
 }
