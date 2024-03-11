@@ -1,4 +1,4 @@
-import { fetch, insert } from "../services/redis.js";
+import moment from "moment";
 
 export const fancyDateNoTime = date => {
     const date_ = new Date(date)
@@ -47,4 +47,11 @@ export const _arrayObjectToString = (arr, label) => {
       const temp = arr.map((arrayObject) => arrayObject[label]);
       return _joinArr(temp);
   }
+};
+
+export const getDifferenceInDays = (expiresAt) => {
+  const a = moment(new Date());
+  const b = moment(expiresAt);
+  const difference = b.diff(a, 'days');
+  return difference < 0 ? 0 : difference;
 };

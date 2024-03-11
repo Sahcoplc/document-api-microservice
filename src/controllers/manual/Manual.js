@@ -3,6 +3,8 @@ import { error, success } from "../../helpers/response.js";
 import asyncWrapper from "../../middlewares/async.js";
 import { generateFilter } from "./helper.js";
 import { paginate } from "../../helpers/paginate.js";
+import { manualStatus } from "../../base/request.js";
+import { getDifferenceInDays } from "../../utils/index.js";
 
 export const uploadManual = asyncWrapper(async (req, res) => {
     try {
@@ -42,6 +44,30 @@ export const fetchSingleManual = asyncWrapper(async (req, res) => {
         const manual = await Manual.findOne({ _id: id, deptId }).lean()
 
         return success(res, 200, manual)
+    } catch (e) {
+        return error(res, 500, e)
+    }
+})
+
+export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) => {
+    try {
+        const { locals: { manualsToExpire } } = req
+
+        let manuals = []
+        await Promise.all(
+            manualsToExpire.map(async manual => {
+                let doc
+                const daysToExpire = manual.dueDate ? getDifferenceInDays(manual.dueDate) : getDifferenceInDays(manual.renewalDate)
+                if (daysToExpire) {
+                    doc = await Manual.findOneAndUpdate({ documentNo: manual.documentNo }, { $set: { status: manualStatus.expireSoon(daysToExpire) } }, { new: true })
+                } else {
+                    doc = await Manual.findOneAndUpdate({ documentNo: manual.documentNo }, { $set: { status: manualStatus.expired } }, { new: true })
+                }
+                manuals.push(doc.documentNo)
+            })
+        )
+
+        return success(res, 200, manuals)
     } catch (e) {
         return error(res, 500, e)
     }

@@ -5,6 +5,10 @@ export const generateFilter = (query) => {
         const regex = new RegExp(`${query.title}`, 'i');
         filter = { ...filter, title: { $regex: regex } }
     }
+    
+    if (query.type) {
+        filter = { ...filter, type: query.type }
+    }
 
     if (query.dueDate) {
         filter = {
@@ -18,6 +22,14 @@ export const generateFilter = (query) => {
             ...filter,
             issuedDate: { $eq: new Date(query.issuedDate) }
         }
+    }
+    
+    if (query.renewalDate) {
+        filter = {
+            ...filter,
+            renewalDate: { $eq: new Date(query.renewalDate) }
+        }
+   
     }
     if (query.startDate) {
         filter = {

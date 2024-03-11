@@ -3,7 +3,8 @@ import Joi from "joi"
 
 export const openRoutes = [
     { method: "GET", path: "/" },
-    { method: "GET", path: "/api"}
+    { method: "GET", path: "/api"},
+    { method: "PATCH", path: "/manual/update-status"}
 ]
 
 export const validator = createValidator()
@@ -36,7 +37,9 @@ export const documentTypes = {
     facilitiesRepair: "FACILITIES REPAIR/MAINTENANCE REQUEST FORM",
     cashAdvanceRetirement: "CASH ADVANCE REQUIREMENT VOUCHER",
     allowanceExpensesClaims: "ALLOWANCES AND EXPENSES CLAIMS REINBURSEMENT/RETIREMENT",
-    memo: "INTERNAL MEMO"
+    memo: "INTERNAL MEMO",
+    cert: "CERTIFICATION",
+    manual: "MANUAL"
 }
 
 export const docDeptTitle = {
@@ -57,4 +60,12 @@ export const documentMovementPurpose = {
 export const documentMovementStatus = {
     pending: 'PENDING',
     completed: 'COMPLETED'
+}
+
+export const manualStatus = {
+    active: "ACTIVE",
+    expired: "EXPIRED",
+    expireSoon(days) {
+        return `EXPIRING IN ${days} DAYS`
+    }
 }
