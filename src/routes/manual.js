@@ -7,7 +7,7 @@ import { isAuthorized } from "../middlewares/isAuthorized.js";
 const router = Router()
 
 router.get('/:id', validator.params(idSchema), fetchSingleManual)
-router.post('/', validator.body(uploadManualSchema), isAuthorized(['create-manual', 'create-certificate'], [], []), validateUploadManualOrCertifications, uploadManual)
+router.post('/', validator.body(uploadManualSchema), isAuthorized(['create-manual', 'create-certificate', 'super-create'], [], []), validateUploadManualOrCertifications, uploadManual)
 router.get('/', validator.query(fetchManualSchema), fetch)
 router.patch('/update-status', validateExpiredManualsOrCertifications, updateManualOrCertificationStatus)
 
