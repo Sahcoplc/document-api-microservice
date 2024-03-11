@@ -65,5 +65,7 @@ export const documentMovementStatus = {
 export const manualStatus = {
     active: "ACTIVE",
     expired: "EXPIRED",
-    expireSoon: "ABOUT TO EXPIRE"
+    expireSoon(days) {
+        return `EXPIRING IN ${days} DAYS`
+    }
 }

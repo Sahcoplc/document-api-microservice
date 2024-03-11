@@ -53,7 +53,7 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
         // Update previous versions if previous manual type or name exists
 
         // Find Manual by type
-        const manuals = await Manual.find({ title: body.title }).sort({ createdAt: -1 }).select('documentNo').lean()
+        const manuals = await Manual.find({ title: body.title, type: body.type }).sort({ createdAt: -1 }).select('documentNo').lean()
         // Create an array and push the ids into the array
 
         const previousVersions = []
@@ -108,7 +108,7 @@ export const validateExpiredManualsOrCertifications = asyncWrapper(async (req, r
                 { renewalDate: { $lt: new Date() } },
             ] 
         }
-        const manualsToExpire = await Manual.find(filter).select('documentNo').lean()
+        const manualsToExpire = await Manual.find(filter).select('documentNo type dueDate renewal').lean()
 
         if (!manualsToExpire.length) throw createCustomError('No manuals or certicates expiring soon', 404)
 
