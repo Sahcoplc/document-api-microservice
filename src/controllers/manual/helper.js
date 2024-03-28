@@ -47,3 +47,10 @@ export const generateFilter = (query) => {
 
     return filter
 }
+
+export const populate = () => [
+    {
+        path: "previousVersions",
+        select: "-previousVersions"
+    }
+]

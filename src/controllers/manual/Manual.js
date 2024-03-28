@@ -1,7 +1,7 @@
 import Manual from "../../models/Manual.js";
 import { error, success } from "../../helpers/response.js";
 import asyncWrapper from "../../middlewares/async.js";
-import { generateFilter } from "./helper.js";
+import { generateFilter, populate } from "./helper.js";
 import { paginate } from "../../helpers/paginate.js";
 import { manualStatus } from "../../base/request.js";
 import { getDifferenceInDays } from "../../utils/index.js";
@@ -27,7 +27,7 @@ export const fetch = asyncWrapper(async (req, res) => {
 
         const modelName = "Manual"
 
-        const options = { page, limit, filter, modelName, sort: { createdAt: -1 }, populate: [{ path: 'previousVersions' }] };
+        const options = { page, limit, filter, modelName, sort: { createdAt: -1 }, populate: populate() };
         
         const manuals = await paginate(options)
 
@@ -41,7 +41,7 @@ export const fetchSingleManual = asyncWrapper(async (req, res) => {
     try {
         const { user: { department: { _id: deptId } }, params: { id } } = req
 
-        const manual = await Manual.findOne({ _id: id, deptId }).lean()
+        const manual = await Manual.findOne({ _id: id, deptId }).populate(populate()).lean()
 
         return success(res, 200, manual)
     } catch (e) {

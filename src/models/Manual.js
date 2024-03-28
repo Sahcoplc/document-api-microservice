@@ -13,7 +13,7 @@ const schema = new Schema(
         renewalDate: { type: "Date", required: function() { return this.type === documentTypes.cert } },
         dueDate: { type: "Date", required: function() { return this.type === documentTypes.manual } },
         versionNumber: { type: "String", required: true },
-        previousVersions: [{ type: "String" }],
+        previousVersions: [{ type: "String", ref: "Manual" }],
         attachments: [{type: 'String'}],
         deptId: { type: "String", required: true },
         operator: idAndNameSchemaRequired,
