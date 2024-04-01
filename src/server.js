@@ -48,8 +48,7 @@ const getOrigin = (origin, callback) => {
 };
 
 const corsOptions = {
-  credentials: true,
-  origin: NODE_ENV === 'production' ? getOrigin : '*',
+  credentials: true
 };
 
 const options = {
