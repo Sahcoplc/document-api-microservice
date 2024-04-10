@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./src/",
+        "target": "ES2015",
+        "module": "CommonJS"
+    },
+    "exclude": ["node_modules"],
+    "paths": {
+        "base": ["./src/base"],
+        "helpers": ["./src/helpers"],
+        "mails": ["./src/mails"],
+        "services": ["./src/services"],
+        "models": ["./src/models"],
+        "controllers": ["./src/controllers"],
+        "routes": ["./src/routes"],
+        "middlewares": ["./src/middlewares"],
+        "utils": ["./src/utils"],
+    }
+}
