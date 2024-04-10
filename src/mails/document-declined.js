@@ -1,7 +1,7 @@
 import { fancyDateNoTime } from "../utils/index.js";
 
 /* eslint-disable max-len */
-const documentInbox = ({ title, name, documentType, department, senderName }) => 
+const documentInbox = ({ title, name, documentType, department, senderName, url }) => 
 `<!DOCTYPE html>
 
     <head>
@@ -51,11 +51,12 @@ const documentInbox = ({ title, name, documentType, department, senderName }) =>
                                                                                             style="font-family:'Poppins',sans-serif">
                                                                                             <tr
                                                                                                 style="font-family:'Poppins',sans-serif">
-                                                                                                <td style="padding:10px;line-height:36px;text-align:inherit;font-family:'Poppins',sans-serif;background-color:rgb(235,239,244)"
+                                                                                                <td style="line-height:36px;text-align:inherit;font-family:'Poppins',sans-serif;background-color:rgb(235,239,244)"
                                                                                                     height="100%"
                                                                                                     valign="top"
                                                                                                     bgcolor="#EBEFF4"
                                                                                                     role="module-content">
+                                                                                                    <div style="padding:10px;">
                                                                         
                                                                                                     <img style="height:33px;width:auto;margin:5rem auto 1rem;font-family:'Poppins',sans-serif"
                                                                                                         src="https://sahcoplc.com/wp-content/uploads/2019/06/sifax-sahco-logo-brand-2.png"
@@ -84,8 +85,9 @@ const documentInbox = ({ title, name, documentType, department, senderName }) =>
                                                                                                             ${senderName} from ${department} has declined your ${documentType} document. Log in to SAHCO Internals to view document. 
                                                                                                         </p>
 
-                                                                                                        <p
-                                                                                                            style="font-size:15px;font-family:'Poppins',sans-serif;color:rgb(30,35,41)"></p>
+                                                                                                        <div style="display: flex;justify-content: center;align-items: center;width: 100%;">                                                                 <a
+                                                                                                      style="border-radius: 8px; display: flex; justify-content: center; align-items: center;text-decoration: none; cursor: pointer; font-family: 'Poppins',sans-serif; color:#F1FEFB; font-weight: 600; line-height: 18.2px; border: 1px solid #DF7024; background-color: #DF7024; width: 147px; height: 40px; display: flex; justify-content: center; align-items: center;" role="button" href=${url}>View Document</a>
+                                   </div>
    
                                                                                                         <h4
                                                                                                             style="margin:0.2rem 0px;font-family:'Poppins',sans-serif">
@@ -101,11 +103,10 @@ const documentInbox = ({ title, name, documentType, department, senderName }) =>
     
                                                                                                         </div>
                                                                                 
-    
+    </div>
                                                                         
-                                                                                                        <div style="width: 100%;height:auto; background-color: #292929;padding:20px">
-                                                                                                            <p style="font-size:15px;font-family:'Poppins',sans-serif;color:#fff">
-                                                                                                            Your have 1 hour to verify your account before it expires.</p>
+                                                                                                        <div style="height:auto; background-color: #292929;padding:20px">
+                                                                                    
                                                                                             
                                                                                                             <p style="font-size:15px;font-family:'Poppins',sans-serif;color:#fff">
                                                                                                                 <strong>Have questions? We have answers.</strong><br />

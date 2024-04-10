@@ -32,6 +32,7 @@ class DocumentMovementControl {
             //         department: movement.from.dept,
             //         senderName: movement.from.name,
             //         documentType: movement.type
+            //         url: ${process.env.SAHCO_INTERNALS}/docs/documents/view/${movement.documentId}
             //     })
             // })
 

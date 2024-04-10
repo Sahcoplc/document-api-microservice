@@ -107,6 +107,7 @@ class DocumentController {
             //         senderName: transfer.to.name,
             //         documentType: transfer.type,
             //         status: approvalRequest.status
+            //         url: ${process.env.SAHCO_INTERNALS}/docs/documents/view/${id}
             //     })
             // })
 
