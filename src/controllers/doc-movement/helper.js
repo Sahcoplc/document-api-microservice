@@ -10,7 +10,7 @@ export const generateMovementFilter = (query) => {
                 status: documentMovementStatus.pending 
             },
             {
-                copiedReceivers: { $elemMatch: { "_id": _id } }
+                copiedReceivers: { $elemMatch: { "_id": query._id } }
             }
         ]
     }
