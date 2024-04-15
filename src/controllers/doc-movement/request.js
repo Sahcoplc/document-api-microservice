@@ -18,6 +18,12 @@ export const createDocMovementSchema = Joi.object({
         _id: Joi.string().required(),
         name: Joi.string().required()
     }),
+    copiedReceivers: Joi.array().items(
+        Joi.object({
+            _id: Joi.string().required(),
+            name: Joi.string().required()
+        })
+    ),
     documentId: Joi.string().required()
 })
 

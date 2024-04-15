@@ -145,8 +145,8 @@ const memoDoc = {
         _id: Joi.string().required(),
         name: Joi.string().required()
     }).required(),
-    isAllStaff: Joi.boolean(),
-    receivingDepts: Joi.array().items(Joi.string())
+    // isAllStaff: Joi.boolean(),
+    // receivingDepts: Joi.array().items(Joi.string())
 }
 
 export const createDocumentSchema = Joi.object({
