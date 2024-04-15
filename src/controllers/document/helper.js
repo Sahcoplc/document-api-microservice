@@ -10,6 +10,9 @@ export const generateFilter = (req) => {
                 "content.isAllStaff": true
             },
             {
+                "content.to._id": _id
+            },
+            {
                 "content.receivingDepts": { $in: [deptId] }
             },
             {
