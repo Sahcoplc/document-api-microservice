@@ -133,20 +133,12 @@ const memoDoc = {
         _id: Joi.string().required(),
         name: Joi.string().required()
     }).required(),
-    copiedReceivers: Joi.array().items(
-        Joi.object({
-            _id: Joi.string().required(),
-            name: Joi.string().required()
-        })
-    ),
     title: Joi.string().required(),
     description: Joi.string().required(),
     signedBy: Joi.object({
         _id: Joi.string().required(),
         name: Joi.string().required()
-    }).required(),
-    // isAllStaff: Joi.boolean(),
-    // receivingDepts: Joi.array().items(Joi.string())
+    }).required()
 }
 
 export const createDocumentSchema = Joi.object({
