@@ -125,14 +125,7 @@ const facilitiesRepair = {
 }
 
 const memoDoc = {
-    from: Joi.object({
-        _id: Joi.string().required(),
-        name: Joi.string().required()
-    }).required(),
-    to: Joi.object({
-        _id: Joi.string().required(),
-        name: Joi.string().required()
-    }).required(),
+    staffId: Joi.string().required(),
     title: Joi.string().required(),
     description: Joi.string().required(),
     signedBy: Joi.object({
