@@ -1,7 +1,19 @@
 import { documentMovementStatus } from "../../base/request.js"
 
 export const generateMovementFilter = (query) => {
-    let filter = { "to._id": query._id, status: documentMovementStatus.pending }
+    let filter = { 
+        $or: [
+            { 
+                "to._id": query._id
+            }, 
+            {
+                status: documentMovementStatus.pending 
+            },
+            {
+                copiedReceivers: { $elemMatch: { "_id": query._id } }
+            }
+        ]
+    }
 
     if (query.type) {
         filter = { ...filter, type: query.type }
