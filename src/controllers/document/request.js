@@ -209,7 +209,8 @@ export const filterDocSchema = Joi.object({
 export const approveDocSchema = Joi.object({
     isApproved: Joi.boolean().required(),
     comment: Joi.string().required(),
-    status: Joi.string().valid(...Object.values(approvalStatus)).required()
+    status: Joi.string().valid(...Object.values(approvalStatus)).required(),
+    approvedAmount: Joi.string()
 })
 
 export const approveIdsSchema = Joi.object({
@@ -272,7 +273,7 @@ export const validateUpdateDocument = asyncWrapper(async (req, res, next) => {
 
         if (doc.operator._id != _id) throw new BadRequest('Document not created or owned by you')
 
-        if (transfer && doc.approvalTrail.length > 0 && doc.approvalTrail[doc.approvalTrail.length - 1].status != approvalStatus.declined) {
+        if (transfer && doc.approvalTrail.length > 1 && doc.approvalTrail[doc.approvalTrail.length - 1].status != approvalStatus.requestChanges) {
             throw new BadRequest(`Document: ${type} has recently been approved`)
         }
 

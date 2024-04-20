@@ -26,7 +26,8 @@ export const idAndNameSchemaRequired = {
 export const approvalStatus = {
     pending: "PENDING",
     approved: "APPROVED",
-    declined: "DECLINED"
+    declined: "DECLINED",
+    requestChanges: "REQUEST CHANGES"
 }
 
 export const documentTypes = {
