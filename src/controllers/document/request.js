@@ -301,6 +301,7 @@ export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
         const approvalRequest = {
             _id: userId,
             name: fullName,
+            approvalDate: new Date(),
             ...body
         }
         trail.push(approvalRequest)

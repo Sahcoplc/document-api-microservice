@@ -7,9 +7,10 @@ const approvalSchema = {
     _id: "String",
     name: "String",
     comment: "String",
+    approvedAmount: "String",
     isApproved: Boolean,
     status: { type: "String", default: approvalStatus.pending },
-    approvalDate: { type: "Date", default: new Date() }
+    approvalDate: { type: "Date" }
 }
 
 const schema = new Schema(
