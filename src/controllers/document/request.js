@@ -210,7 +210,7 @@ export const approveDocSchema = Joi.object({
     isApproved: Joi.boolean().required(),
     comment: Joi.string().required(),
     status: Joi.string().valid(...Object.values(approvalStatus)).required(),
-    approvedAmount: Joi.string()
+    approvedAmount: Joi.number()
 })
 
 export const approveIdsSchema = Joi.object({

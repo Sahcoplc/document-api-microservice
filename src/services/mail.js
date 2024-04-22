@@ -74,10 +74,10 @@ export const sendMailWithAxios = async ({ receivers = [], subject, body }) => {
     }
     try {
         const data = await instance.post('/email', mailbody)
-        console.log("AXIOS MAIL:: ", data.data)
+        // console.log("AXIOS MAIL:: ", data.data)
         return data.data
     } catch (e) {
-        console.log("AX ERR:: ", e.response.data)
+        // console.log("AX ERR:: ", e.response.data)
         return e.response.data
     }
 }
