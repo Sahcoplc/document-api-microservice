@@ -6,10 +6,13 @@ import { approvalStatus, documentTypes, idAndNameSchemaRequired } from "../base/
 const approvalSchema = {
     _id: "String",
     name: "String",
+    dept: "String",
+    jobTitle: "String",
     comment: "String",
+    approvedAmount: "Number",
     isApproved: Boolean,
     status: { type: "String", default: approvalStatus.pending },
-    approvalDate: { type: "Date", default: new Date() }
+    approvalDate: { type: "Date" }
 }
 
 const schema = new Schema(
