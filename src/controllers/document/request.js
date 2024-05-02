@@ -315,6 +315,6 @@ export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
 
         return next()
     } catch (e) {
-        return error(res, 500, e) 
+        return error(res, e?.statusCode || 500, e) 
     }
 })
