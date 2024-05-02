@@ -203,6 +203,7 @@ export const filterDocSchema = Joi.object({
     startDate: Joi.date(),
     endDate: Joi.date().greater(Joi.ref("startDate")),
     type: Joi.string().valid(...Object.values(documentTypes)),
+    status: Joi.string().valid(...Object.values(approvalStatus)),
     documentNo: Joi.string()
 })
 
