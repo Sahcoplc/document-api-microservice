@@ -1,4 +1,5 @@
 import { documentMovementStatus } from "../../base/request.js"
+import { Types } from "mongoose"
 
 export const generateMovementFilter = (query) => {
     let filter = { 
@@ -40,6 +41,13 @@ export const generateMovementFilter = (query) => {
         filter = {
             ...filter,
             createdAt: { $gte: new Date(query.startDate), $lte: new Date(query.endDate) }
+        }
+    }
+
+    if (query.documentId) {
+        filter = {
+            ...filter,
+            documentId: Types.ObjectId(query.documentId)
         }
     }
 

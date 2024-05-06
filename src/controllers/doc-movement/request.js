@@ -32,6 +32,7 @@ export const fetchTransferSchema = Joi.object({
     limit: Joi.number(),
     type: Joi.string().valid(...Object.values(documentTypes)),
     sender: Joi.string(),
+    documentId: Joi.string(),
     sentByMe: Joi.bool().default(false),
     startDate: Joi.date(),
     endDate: Joi.date().greater(Joi.ref("startDate"))
