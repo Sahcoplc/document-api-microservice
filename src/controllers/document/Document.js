@@ -9,6 +9,7 @@ import { getEmployee, sendNotification } from "../../helpers/fetch.js"
 import { startSession } from 'mongoose'
 import documentApproval from "../../mails/document-approval.js"
 import { documentMovementStatus } from "../../base/request.js"
+import { Types } from "mongoose"
 
 class DocumentController {
 
@@ -65,7 +66,21 @@ class DocumentController {
         try {
             const { params: { id } } = req
 
-            const document = await Document.findById({ _id: id }).lean()
+            const document = await Document.aggregate([
+                {
+                    $match: {
+                        _id: new Types.ObjectId(id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "documentmovements",
+                        localField: "_id",
+                        foreignField: "documentId",
+                        as: "movements"
+                    }
+                }
+            ])
             
             return success(res, 200, document)
         } catch (e) {

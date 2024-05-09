@@ -48,8 +48,40 @@ class DocumentMovementControl {
 
             const filter = generateMovementFilter({ ...req.query, _id })
 
+            const pipeline = [
+                {
+                    $lookup: {
+                        from: "documents",
+                        localField: "documentId",
+                        foreignField: "_id",
+                        as: "documents"
+                    }
+                },
+                {
+                    $match: filter
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        type: 1,
+                        from: 1,
+                        to: 1,
+                        copiedReceivers: 1,
+                        parentStationId: 1,
+                        purpose: 1,
+                        documentId: 1,
+                        status: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        document: {
+                          $arrayElemAt: ["$documents", 0]
+                        }
+                      }
+                }
+            ]
+
             const modelName = "DocumentMovement"
-            const options = { page, limit, filter, modelName, sort: { createdAt: -1 }, populate: [{ path: 'documentId' }] };
+            const options = { page, limit, modelName, pipeline, sort: { createdAt: -1 } };
             const transferredDocs = await paginate(options);
 
             return success(res, 200, transferredDocs)

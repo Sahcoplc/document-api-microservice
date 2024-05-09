@@ -19,6 +19,14 @@ export const generateMovementFilter = (query) => {
     if (query.type) {
         filter = { ...filter, type: query.type }
     }
+    
+    if (query.documentStatus) {
+        filter = { ...filter, documents: { $elemMatch: { "status": query.documentStatus } } }
+    }
+
+    if (query.documentNo) {
+        filter = { ...filter, documents: { $elemMatch: { "documentNo": query.documentNo } } }
+    }
 
     if (query.sender) {
         const regex = new RegExp(`${query.sender}`, 'i');
@@ -47,7 +55,7 @@ export const generateMovementFilter = (query) => {
     if (query.documentId) {
         filter = {
             ...filter,
-            documentId: Types.ObjectId(query.documentId)
+            documentId: new Types.ObjectId(query.documentId)
         }
     }
 
