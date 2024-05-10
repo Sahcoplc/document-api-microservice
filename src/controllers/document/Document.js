@@ -80,7 +80,7 @@ class DocumentController {
                         as: "movements"
                     }
                 }
-            ])
+            ])[0]
             
             return success(res, 200, document)
         } catch (e) {
