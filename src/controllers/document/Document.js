@@ -80,9 +80,9 @@ class DocumentController {
                         as: "movements"
                     }
                 }
-            ])[0]
+            ])
             
-            return success(res, 200, document)
+            return success(res, 200, document[0])
         } catch (e) {
             return error(res, 500, e)
         }
