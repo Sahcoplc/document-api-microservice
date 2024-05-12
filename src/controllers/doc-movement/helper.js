@@ -6,9 +6,6 @@ export const generateMovementFilter = (query) => {
         $or: [
             { 
                 "to._id": query._id
-            }, 
-            {
-                status: documentMovementStatus.pending 
             },
             {
                 copiedReceivers: { $elemMatch: { "_id": query._id } }
@@ -21,11 +18,11 @@ export const generateMovementFilter = (query) => {
     }
     
     if (query.documentStatus) {
-        filter = { ...filter, documents: { $elemMatch: { "status": query.documentStatus } } }
+        filter = { ...filter, document: { $elemMatch: { "status": query.documentStatus } } }
     }
 
     if (query.documentNo) {
-        filter = { ...filter, documents: { $elemMatch: { "documentNo": query.documentNo } } }
+        filter = { ...filter, document: { $elemMatch: { "documentNo": query.documentNo } } }
     }
 
     if (query.sender) {
