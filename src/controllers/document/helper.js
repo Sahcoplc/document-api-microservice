@@ -7,6 +7,10 @@ export const generateFilter = (req) => {
     if (query.type) {
         filter = { ...filter, type: query.type }
     }
+    
+    if (query.status) {
+        filter = { ...filter, status: query.status }
+    }
 
     if (query.documentNo) filter = { ...filter, documentNo: query.documentNo }
 

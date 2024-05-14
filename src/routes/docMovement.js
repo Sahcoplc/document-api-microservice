@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { idSchema, validator } from "../base/request.js";
+import { validator } from "../base/request.js";
 import { createDocMovementSchema, fetchTransferSchema, validateDocMovement } from "../controllers/doc-movement/request.js";
 import DocumentMovementControl from "../controllers/doc-movement/DocMovement.js";
 

@@ -29,7 +29,8 @@ const schema = new Schema(
             name: { type: "String", required: true }, 
             subDept: "String",
         },
-        attachments: [{ type: "String" }]
+        attachments: [{ type: "String" }],
+        status: { type: "String", default: approvalStatus.pending },
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )

@@ -203,6 +203,7 @@ export const filterDocSchema = Joi.object({
     startDate: Joi.date(),
     endDate: Joi.date().greater(Joi.ref("startDate")),
     type: Joi.string().valid(...Object.values(documentTypes)),
+    status: Joi.string().valid(...Object.values(approvalStatus)),
     documentNo: Joi.string()
 })
 
@@ -314,6 +315,6 @@ export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
 
         return next()
     } catch (e) {
-        return error(res, 500, e) 
+        return error(res, e?.statusCode || 500, e) 
     }
 })

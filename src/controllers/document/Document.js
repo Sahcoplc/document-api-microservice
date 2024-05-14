@@ -1,4 +1,4 @@
-// import { sendMail } from "../../services/mail.js"
+import { sendMail } from "../../services/mail.js"
 import { paginate } from "../../helpers/paginate.js"
 import { error, success } from "../../helpers/response.js"
 import asyncWrapper from "../../middlewares/async.js"
@@ -7,8 +7,9 @@ import DocumentMovement from "../../models/DocumentMovement.js"
 import { generateFilter } from "./helper.js"
 import { getEmployee, sendNotification } from "../../helpers/fetch.js"
 import { startSession } from 'mongoose'
-// import documentApproval from "../../mails/document-approval.js"
+import documentApproval from "../../mails/document-approval.js"
 import { documentMovementStatus } from "../../base/request.js"
+import { Types } from "mongoose"
 
 class DocumentController {
 
@@ -65,9 +66,23 @@ class DocumentController {
         try {
             const { params: { id } } = req
 
-            const document = await Document.findById({ _id: id }).lean()
+            const document = await Document.aggregate([
+                {
+                    $match: {
+                        _id: new Types.ObjectId(id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "documentmovements",
+                        localField: "_id",
+                        foreignField: "documentId",
+                        as: "movements"
+                    }
+                }
+            ])
             
-            return success(res, 200, document)
+            return success(res, 200, document[0])
         } catch (e) {
             return error(res, 500, e)
         }
@@ -75,13 +90,13 @@ class DocumentController {
 
     approveDocument = asyncWrapper(async (req, res) => {
         try {
-            const { locals: { approvalRequest }, params: { id, movementId }, user: { apiKey, fullName, department: { name } } } = req
+            const { locals: { approvalRequest }, params: { id, movementId }, user: { apiKey, fullName, department: { name } }, body: { status } } = req
 
             let approval = null
             let transfer = null
             const session = await startSession()
             await session.withTransaction(async () => {
-                approval = await Document.findByIdAndUpdate({ _id: id }, { $set: { approvalTrail: approvalRequest }}, { new: true, session })
+                approval = await Document.findByIdAndUpdate({ _id: id }, { $set: { approvalTrail: approvalRequest, status }}, { new: true, session })
                 transfer = await DocumentMovement.findByIdAndUpdate({ _id: movementId }, { $set: { status: documentMovementStatus.completed }}, { new: true, session })
             })
             session.endSession()
@@ -97,19 +112,19 @@ class DocumentController {
 
             await sendNotification(apiKey, notify)
 
-            // await sendMail({
-            //     email: data.companyEmail,
-            //     subject: "DOCUMENT APPROVAL",
-            //     body: documentApproval({
-            //         title: "DOCUMENT APPROVAL",
-            //         name: approval.name,
-            //         department: transfer.to.dept,
-            //         senderName: transfer.to.name,
-            //         documentType: transfer.type,
-            //         status: approvalRequest.status
-            //         url: ${process.env.SAHCO_INTERNALS}/docs/documents/view/${id}/${movementId}/${transfer.to._id}
-            //     })
-            // })
+            await sendMail({
+                email: data.companyEmail,
+                subject: "DOCUMENT APPROVAL",
+                body: documentApproval({
+                    title: "DOCUMENT APPROVAL",
+                    name: approval.name,
+                    department: transfer.to.dept,
+                    senderName: transfer.to.name,
+                    documentType: transfer.type,
+                    status: approvalRequest.status,
+                    url: `${process.env.SAHCO_INTERNALS}/docs/documents/view/${id}/${movementId}/${transfer.to._id}`
+                })
+            })
 
             return success(res, 200, approval)
         } catch (e) {

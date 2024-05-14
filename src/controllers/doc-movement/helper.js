@@ -1,13 +1,11 @@
 import { documentMovementStatus } from "../../base/request.js"
+import { Types } from "mongoose"
 
 export const generateMovementFilter = (query) => {
     let filter = { 
         $or: [
             { 
                 "to._id": query._id
-            }, 
-            {
-                status: documentMovementStatus.pending 
             },
             {
                 copiedReceivers: { $elemMatch: { "_id": query._id } }
@@ -17,6 +15,14 @@ export const generateMovementFilter = (query) => {
 
     if (query.type) {
         filter = { ...filter, type: query.type }
+    }
+    
+    if (query.documentStatus) {
+        filter = { ...filter, document: { $elemMatch: { "status": query.documentStatus } } }
+    }
+
+    if (query.documentNo) {
+        filter = { ...filter, document: { $elemMatch: { "documentNo": query.documentNo } } }
     }
 
     if (query.sender) {
@@ -40,6 +46,13 @@ export const generateMovementFilter = (query) => {
         filter = {
             ...filter,
             createdAt: { $gte: new Date(query.startDate), $lte: new Date(query.endDate) }
+        }
+    }
+
+    if (query.documentId) {
+        filter = {
+            ...filter,
+            documentId: new Types.ObjectId(query.documentId)
         }
     }
 
