@@ -113,7 +113,7 @@ class DocumentController {
             await sendNotification(apiKey, notify)
 
             await sendMail({
-                email: data.companyEmail,
+                receivers: [{email: data.companyEmail, name: data.fullName}],
                 subject: "DOCUMENT APPROVAL",
                 body: documentApproval({
                     title: "DOCUMENT APPROVAL",
