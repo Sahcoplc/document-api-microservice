@@ -118,6 +118,6 @@ export const validateExpiredManualsOrCertifications = asyncWrapper(async (req, r
         }
         return next()
     } catch (e) {
-        return error(res, 500, e)
+        return error(res, e.statusCode ?? 500, e)
     }
 })
