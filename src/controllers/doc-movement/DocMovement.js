@@ -48,7 +48,19 @@ class DocumentMovementControl {
 
             const filter = generateMovementFilter({ ...req.query, _id })
 
+            const secondGradeFilter = {}
+
+            if (req.query.documentNo) {
+                secondGradeFilter.documents = { $elemMatch: { "documentNo": req.query.documentNo } }
+            }
+            if (req.query.documentStatus) {
+                secondGradeFilter.documents = { $elemMatch: { "status": req.query.documentStatus } }
+            }
+
             const pipeline = [
+                {
+                    $match: filter
+                },
                 {
                     $lookup: {
                         from: "documents",
@@ -58,7 +70,7 @@ class DocumentMovementControl {
                     }
                 },
                 {
-                    $match: filter
+                    $match: secondGradeFilter
                 },
                 {
                     $project: {
@@ -86,7 +98,7 @@ class DocumentMovementControl {
 
             return success(res, 200, transferredDocs)
         } catch(e) {
-            return error(res, 500, e)
+            return error(res, e?.statusCode || 500, e)
         }
     })
 }
