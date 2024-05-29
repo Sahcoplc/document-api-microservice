@@ -4,7 +4,7 @@ import asyncWrapper from "../../middlewares/async.js";
 import { generateFilter, populate } from "./helper.js";
 import { paginate } from "../../helpers/paginate.js";
 import { manualStatus } from "../../base/request.js";
-import { getDifferenceInDays } from "../../utils/index.js";
+import { getDifferenceInMonths } from "../../utils/index.js";
 
 export const uploadManual = asyncWrapper(async (req, res) => {
     try {
@@ -57,7 +57,7 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
         await Promise.all(
             manualsToExpire.map(async manual => {
                 let doc
-                const daysToExpire = manual.dueDate ? getDifferenceInDays(manual.dueDate) : getDifferenceInDays(manual.renewalDate)
+                const daysToExpire = manual.dueDate ? getDifferenceInMonths(manual.dueDate) : getDifferenceInMonths(manual.renewalDate)
                 if (daysToExpire) {
                     doc = await Manual.findOneAndUpdate({ documentNo: manual.documentNo }, { $set: { status: manualStatus.expireSoon(daysToExpire) } }, { new: true })
                 } else {
