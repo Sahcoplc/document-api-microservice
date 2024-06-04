@@ -40,7 +40,9 @@ export const documentTypes = {
     allowanceExpensesClaims: "ALLOWANCES AND EXPENSES CLAIMS REINBURSEMENT/RETIREMENT",
     memo: "INTERNAL MEMO",
     cert: "CERTIFICATION",
-    manual: "MANUAL"
+    manual: "MANUAL",
+    license: "LICENSE",
+    contract: "CONTRACT"
 }
 
 export const docDeptTitle = {
