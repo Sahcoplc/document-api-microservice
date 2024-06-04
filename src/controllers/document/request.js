@@ -208,7 +208,6 @@ export const filterDocSchema = Joi.object({
 })
 
 export const approveDocSchema = Joi.object({
-    isApproved: Joi.boolean().required(),
     comment: Joi.string().required(),
     status: Joi.string().valid(...Object.values(approvalStatus)).required(),
     approvedAmount: Joi.number()

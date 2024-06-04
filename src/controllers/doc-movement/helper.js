@@ -58,7 +58,5 @@ export const generateMovementFilter = (query) => {
         }
     }
 
-    console.log('F22:: ', filter)
-
     return filter
 }

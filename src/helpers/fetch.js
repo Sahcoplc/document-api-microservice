@@ -1,4 +1,5 @@
 import axios from "axios";
+import request from "request-promise"
 import { createCustomError } from "../utils/errors/customError.js";
 
 const { SAHCO_HR_SERVER, SAHCO_DOCS_SERVER } = process.env
@@ -22,21 +23,6 @@ const defaultHeaders = {
 const instance = API(SAHCO_HR_SERVER, defaultHeaders)
 const docsInstance = API(SAHCO_DOCS_SERVER, defaultHeaders)
 
-export const getProfile = async (apiKey) => {
-
-    try {
-        const { data } = await instance.get(`/auth/profile`, {
-            headers: {
-                "X-SAHCOAPI-KEY": apiKey
-            }
-        })
-        
-        return data
-    } catch (e) {
-        throw createCustomError(e?.response?.data?.message, e?.response?.status);
-    }
-}
-
 export const getPermission = async (id, apiKey) => {
     
     try {
@@ -52,40 +38,33 @@ export const getPermission = async (id, apiKey) => {
     }
 }
 
-export const getEmployee = async (apiKey, id) => {
-
-    try {
-        const { data } = await instance.get(`/employees/${id}`, {
-            headers: {
-                "X-SAHCOAPI-KEY": apiKey
-            }
-        })
-        
-        return data
-    } catch (e) {
-        throw createCustomError(e?.response?.data?.message, e?.response?.status);
-    }
-}
-
-export const sendNotification = async (apiKey, body) => {
-    try {
-        const { data } = await instance.post(`/alerts/new`, body, {
-            headers: {
-                "X-SAHCOAPI-KEY": apiKey
-            }
-        })
-        
-        return data
-    } catch (e) {
-        throw createCustomError(e?.response?.data?.message, e?.response?.status);
-    }
-}
-
 export const updateCertificateStatus = async () => {
     try {
         const { data } = await docsInstance.patch(`/manual/update-status`)
-        
         return data
+    } catch (e) {
+        throw createCustomError(e?.response?.data?.message, e?.response?.status);
+    }
+}
+
+export const makeRequest = async (method, endpoint, token, data, query) => {
+    try {
+        const uri = `${SAHCO_HR_SERVER}/${endpoint}`
+        const options = {
+            uri,
+            method,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-SAHCOAPI-KEY": token
+            },
+            json: true // Automatically parses the JSON string in the response
+        };
+        if (data && Object.keys(data).length > 0) options.body = data
+        if (query) options.qs = query
+        const res = await request(options)
+          
+        return res
     } catch (e) {
         throw createCustomError(e?.response?.data?.message, e?.response?.status);
     }

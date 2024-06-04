@@ -67,6 +67,6 @@ export const manualStatus = {
     active: "ACTIVE",
     expired: "EXPIRED",
     expireSoon(days) {
-        return `EXPIRING IN ${days} DAYS`
+        return `EXPIRING IN ${days} MONTHS`
     }
 }

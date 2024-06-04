@@ -1,7 +1,7 @@
 import { fancyDateNoTime } from "../utils/index.js";
 
 /* eslint-disable max-len */
-const expiredCertificate = ({ title, name, documentType, department, senderName, url }) => 
+const expiredCertificate = ({ title, expireDate, docName, url }) => 
 `<!DOCTYPE html>
 
     <head>
@@ -78,11 +78,11 @@ const expiredCertificate = ({ title, name, documentType, department, senderName,
                                                                                                             ${title}</h3>
                                                                                                         <p
                                                                                                             style="font-size:15px;font-family:'Poppins',sans-serif;color:rgb(30,35,41)">
-                                                                                                            Hello ${name},
+                                                                                                            Hello All,
                                                                                                         </p>
                                                                                                         <p
                                                                                                             style="font-size:15px;font-family:'Poppins',sans-serif;color:rgb(30,35,41)">
-                                                                                                            ${senderName} from ${department} has declined your ${documentType} document. Log in to SAHCO Internals to view document. 
+                                                                                                            ${docName} document in your department is ${expireDate}. Log in to SAHCO Internals to view document. 
                                                                                                         </p>
 
                                                                                                         <div style="display: flex;justify-content: center;align-items: center;width: 100%;">                                                                 <a

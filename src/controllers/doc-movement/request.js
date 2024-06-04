@@ -4,7 +4,7 @@ import { error } from '../../helpers/response.js'
 import Document from '../../models/Document.js'
 import BadRequest from '../../utils/errors/badRequest.js'
 import { approvalStatus, documentMovementPurpose, documentMovementStatus, documentTypes } from '../../base/request.js'
-import { getEmployee } from '../../helpers/fetch.js'
+import { makeRequest } from '../../helpers/fetch.js'
 import DocumentMovement from '../../models/DocumentMovement.js'
 
 export const createDocMovementSchema = Joi.object({
@@ -56,7 +56,7 @@ export const validateDocMovement = asyncWrapper(async (req, res, next) => {
             await DocumentMovement.updateOne({ _id: docTransfer._id }, { $set: { status: documentMovementStatus.completed } }, { new: true })
         }
 
-        const { data } = await getEmployee(apiKey, receiverId)
+        const { data } = await makeRequest('GET', 'employees', apiKey, {}, { id: receiverId })
 
         req.locals = {
             ...req.locals,

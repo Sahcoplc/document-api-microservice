@@ -6,6 +6,7 @@ import Manual from "../../models/Manual.js";
 import { generateDocumentNo } from "../../controllers/document/helper.js";
 import { documentTypes, manualStatus } from "../../base/request.js";
 import { createCustomError } from "../../utils/errors/customError.js";
+import moment from "moment";
 
 export const uploadManualSchema = Joi.object({
     title: Joi.string().required(),
@@ -102,13 +103,13 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
 export const validateExpiredManualsOrCertifications = asyncWrapper(async (req, res, next) => {
     try {
         const filter = { 
-            status: manualStatus.active,
+            status: { $ne: manualStatus.expired },
             $or: [
-                { dueDate: { $lt: new Date() } },
-                { renewalDate: { $lt: new Date() } },
+                { dueDate: { $lte: moment().add(6, 'months') } },
+                { renewalDate: { $lte: moment().add(6, 'months') } },
             ] 
         }
-        const manualsToExpire = await Manual.find(filter).select('documentNo type dueDate renewal').lean()
+        const manualsToExpire = await Manual.find(filter).lean()
 
         if (!manualsToExpire.length) throw createCustomError('No manuals or certicates expiring soon', 404)
 

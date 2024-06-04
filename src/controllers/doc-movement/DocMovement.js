@@ -4,7 +4,7 @@ import asyncWrapper from "../../middlewares/async.js"
 import { sendMail } from "../../services/mail.js"
 import documentInbox from "../../mails/new-document.js"
 import { generateMovementFilter } from "./helper.js"
-import { sendNotification } from "../../helpers/fetch.js"
+import { makeRequest } from "../../helpers/fetch.js"
 import { paginate } from "../../helpers/paginate.js"
 
 class DocumentMovementControl {
@@ -21,7 +21,7 @@ class DocumentMovementControl {
                 isAll: false
             }
 
-            await sendNotification(apiKey, notify)
+            await makeRequest('POST', 'alerts/new', apiKey, notify)
 
             await sendMail({
                 receivers: [{email: movement.to.email, name: movement.to.name}],
