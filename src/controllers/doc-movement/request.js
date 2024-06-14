@@ -56,7 +56,7 @@ export const validateDocMovement = asyncWrapper(async (req, res, next) => {
             await DocumentMovement.updateOne({ _id: docTransfer._id }, { $set: { status: documentMovementStatus.completed } }, { new: true })
         }
 
-        const { data } = await makeRequest('GET', 'employees', apiKey, {}, { id: receiverId })
+        const { data } = await makeRequest('GET', `employees/${receiverId}`, apiKey, {}, {})
 
         req.locals = {
             ...req.locals,

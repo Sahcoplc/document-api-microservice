@@ -61,7 +61,7 @@ export const makeRequest = async (method, endpoint, token, data, query) => {
             json: true // Automatically parses the JSON string in the response
         };
         if (data && Object.keys(data).length > 0) options.body = data
-        if (query) options.qs = query
+        if (query && Object.keys(query).length > 0) options.qs = query
         const res = await request(options)
           
         return res
