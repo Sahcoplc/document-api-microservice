@@ -16,7 +16,7 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
     const { data: user } = await makeRequest('GET', 'auth/profile', apiKey);
     const { data: permissions } = await getPermission(user.permissions, apiKey);
 
-    req.user = { ...user, permissions };
+    req.user = { ...user, permissions, apiKey };
 
     return next();
   } catch (err) {
