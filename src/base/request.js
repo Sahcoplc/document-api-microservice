@@ -65,9 +65,16 @@ export const documentMovementStatus = {
     completed: 'COMPLETED'
 }
 
+export const CONTRACT_TYPES = {
+    support: 'SUPPORT',
+    airline: 'AIRLINE'
+}
+
 export const manualStatus = {
     active: "ACTIVE",
     expired: "EXPIRED",
+    oneOff: "ONE-OFF",
+    retainer: "RETAINERSHIP",
     expireSoon(days) {
         return `EXPIRING IN ${days} MONTHS`
     }

@@ -4,7 +4,7 @@ import asyncWrapper from "../../middlewares/async.js";
 import { uploadFiles } from "../../services/storage.js";
 import Manual from "../../models/Manual.js";
 import { generateDocumentNo } from "../../controllers/document/helper.js";
-import { documentTypes, manualStatus } from "../../base/request.js";
+import { CONTRACT_TYPES, documentTypes, manualStatus } from "../../base/request.js";
 import { createCustomError } from "../../utils/errors/customError.js";
 import moment from "moment";
 
@@ -24,12 +24,26 @@ export const uploadManualSchema = Joi.object({
         is: documentTypes.manual,
         then: Joi.required()
     }),
+    typeOfService: Joi.string().when('type', {
+        is: documentTypes.contract,
+        then: Joi.required()
+    }),
+    typeOfContract: Joi.string().valid(...Object.values(CONTRACT_TYPES)).when('type', {
+        is: documentTypes.contract,
+        then: Joi.required()
+    }),
+    contractStatus: Joi.string().valid(manualStatus.oneOff, manualStatus.retainer).when('type', {
+        is: documentTypes.contract,
+        then: Joi.required()
+    }),
     attachments: Joi.any().required()
 })
 
 export const fetchManualSchema = Joi.object({
     title: Joi.string(),
     type: Joi.string().valid(documentTypes.manual, documentTypes.cert, documentTypes.license, documentTypes.contract).required(),
+    typeOfContract: Joi.string().valid(...Object.values(CONTRACT_TYPES)),
+    contractStatus: Joi.string().valid(manualStatus.oneOff, manualStatus.retainer),
     dueDate: Joi.date(),
     issuedDate: Joi.date(),
     renewalDate: Joi.date(),

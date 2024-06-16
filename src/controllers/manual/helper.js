@@ -10,6 +10,14 @@ export const generateFilter = (query) => {
         filter = { ...filter, type: query.type }
     }
 
+    if (query.typeOfContract) {
+        filter = { ...filter, typeOfContract: query.typeOfContract }
+    }
+
+    if (query.contractStatus) {
+        filter = { ...filter, contractStatus: query.contractStatus }
+    }
+
     if (query.dueDate) {
         filter = {
             ...filter,

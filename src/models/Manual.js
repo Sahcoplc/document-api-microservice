@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import paginator from "mongoose-paginate-v2";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import { documentTypes, idAndNameSchemaRequired, manualStatus } from "../base/request.js";
+import { CONTRACT_TYPES, documentTypes, idAndNameSchemaRequired, manualStatus } from "../base/request.js";
 
 
 const schema = new Schema(
@@ -18,7 +18,10 @@ const schema = new Schema(
         deptId: { type: "String", required: true },
         operator: idAndNameSchemaRequired,
         documentNo: { type: "String", required: true, unique: true },
-        status: { type: "String", required: true, default: manualStatus.active }
+        status: { type: "String", required: true, default: manualStatus.active },
+        typeOfService: { type: "String", required: function() { return this.type === documentTypes.contract } },
+        typeOfContract: { type: "String", required: function() { return this.type === documentTypes.contract }, enum: Object.values(CONTRACT_TYPES) },
+        contractStatus: { type: "String", required: function() { return this.type === documentTypes.contract }, default: manualStatus.oneOff },
     },
     { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
