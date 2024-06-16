@@ -7,7 +7,7 @@ import { documentTypes, idAndNameSchemaRequired, manualStatus } from "../base/re
 const schema = new Schema(
     {
         title: { type: "String", required: true },
-        type: { type: "String", enum: [documentTypes.manual, documentTypes.cert], default: documentTypes.manual, required: true },
+        type: { type: "String", enum: [documentTypes.manual, documentTypes.cert, documentTypes.contract, documentTypes.license], default: documentTypes.manual, required: true },
         issuedDate: { type: "Date", required: true },
         revisedDate: { type: "Date", required: function() { return this.type === documentTypes.manual } },
         renewalDate: { type: "Date", required: function() { return this.type === documentTypes.cert } },
