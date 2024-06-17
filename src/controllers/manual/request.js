@@ -90,8 +90,9 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
             docNo = `00${no}`
             versionNumber = `${parseFloat(no)}.0`
             documentNo = documentNo.replace(replace, docNo)
-            let versions = manuals.map(manual => manual._id)
+            let versions = manuals[0].previousVersions
             previousVersions.push(...versions)
+            previousVersions.unshift(manuals[0]._id)
         } else {
             documentNo = generateDocumentNo(false, docType, name.match(/\b(\w)/g).join(''), matches, docNo)
         }

@@ -17,7 +17,10 @@ export const uploadManual = asyncWrapper(async (req, res) => {
 
         return success(res, 201, result)
     } catch (e) {
-        return error(res, 500, e)
+        let message = 'Something went wrong'
+        if ((e.message || e).includes("E11000 duplicate key error collection")) 
+            message = "Document updated version already exist"
+        return error(res, 500, message)
     }
 })
 
