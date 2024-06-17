@@ -10,6 +10,7 @@ import moment from "moment";
 
 export const uploadManualSchema = Joi.object({
     title: Joi.string().required(),
+    recentVersion: Joi.string(),
     type: Joi.string().valid(documentTypes.manual, documentTypes.cert, documentTypes.license, documentTypes.contract).required(),
     revisedDate: Joi.date().when('type', {
         is: documentTypes.manual,
@@ -62,28 +63,36 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
         const folder = body.type === documentTypes.manual ? 'manuals' : 'certificates'
 
         if (body.attachments) body.attachments = await uploadFiles(body.attachments, folder)
-        const matches = body.title.match(/\b(\w)/g).join('');
+        const docType = body.type[0]
 
         let docNo = '001'
-        // Update previous versions if previous manual type or name exists
+        let manuals = []
+        // Check if previous versions if recentVersion id was sent
+        if (body.recentVersion) {
+            manuals = await Manual.find({ _id: body.recentVersion })
+        }
 
         // Find Manual by type
-        const manuals = await Manual.find({ title: body.title, type: body.type }).sort({ createdAt: -1 }).select('documentNo').lean()
+        // manuals = await Manual.find({ title: body.title, type: body.type }).sort({ createdAt: -1 }).select('documentNo').lean()
         // Create an array and push the ids into the array
 
         const previousVersions = []
         let versionNumber = '1.0'
+        let documentNo = ''
 
         if (manuals.length) {
-            let no = manuals[0].documentNo.split('/')[4]
-            if (typeof no === 'undefined') no = docNo
+            documentNo = manuals[0].documentNo
+            let no = documentNo.split('/')[4] || documentNo.split('/')[3]
+            let replace = documentNo.split('/')[4] || documentNo.split('/')[3]
             no = parseInt(no)
             no += 1
             docNo = `00${no}`
             versionNumber = parseFloat(no)
+            documentNo = documentNo.replace(replace, docNo)
             let versions = manuals.map(manual => manual._id)
             previousVersions.push(...versions)
         }
+        documentNo = generateDocumentNo(false, docType, name.match(/\b(\w)/g).join(''), docNo)
 
         const revisedDate = body.revisedDate ? new Date(body.revisedDate) : null
         const dueDate = body.dueDate ? new Date(body.dueDate) : null
@@ -94,7 +103,7 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
             issuedDate: new Date(body.issuedDate),
             deptId,
             operator: { _id, name: fullName },
-            documentNo: generateDocumentNo(false, name.match(/\b(\w)/g).join(''), matches, docNo),
+            documentNo,
             previousVersions,
             versionNumber: `${versionNumber}.0`
         }
