@@ -3,7 +3,7 @@ import { error } from "../../helpers/response.js";
 import asyncWrapper from "../../middlewares/async.js";
 import { uploadFiles } from "../../services/storage.js";
 import Manual from "../../models/Manual.js";
-import { generateDocumentNo } from "../../controllers/document/helper.js";
+import { generateDocumentNo, pickRandomCharacters } from "../../controllers/document/helper.js";
 import { CONTRACT_TYPES, documentTypes, manualStatus } from "../../base/request.js";
 import { createCustomError } from "../../utils/errors/customError.js";
 import moment from "moment";
@@ -63,7 +63,8 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
         const folder = body.type === documentTypes.manual ? 'manuals' : 'certificates'
 
         if (body.attachments) body.attachments = await uploadFiles(body.attachments, folder)
-        const docType = body.type[0]
+        const docType = body.type[0];
+        const matches = pickRandomCharacters(body.title, 3)
 
         let docNo = '001'
         let manuals = []
@@ -82,17 +83,18 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
 
         if (manuals.length) {
             documentNo = manuals[0].documentNo
-            let no = documentNo.split('/')[4] || documentNo.split('/')[3]
-            let replace = documentNo.split('/')[4] || documentNo.split('/')[3]
+            let no = documentNo.split('/')[4]
+            const replace = documentNo.split('/')[4]
             no = parseInt(no)
             no += 1
             docNo = `00${no}`
-            versionNumber = parseFloat(no)
+            versionNumber = `${parseFloat(no)}.0`
             documentNo = documentNo.replace(replace, docNo)
             let versions = manuals.map(manual => manual._id)
             previousVersions.push(...versions)
+        } else {
+            documentNo = generateDocumentNo(false, docType, name.match(/\b(\w)/g).join(''), matches, docNo)
         }
-        documentNo = generateDocumentNo(false, docType, name.match(/\b(\w)/g).join(''), docNo)
 
         const revisedDate = body.revisedDate ? new Date(body.revisedDate) : null
         const dueDate = body.dueDate ? new Date(body.dueDate) : null
@@ -105,7 +107,7 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
             operator: { _id, name: fullName },
             documentNo,
             previousVersions,
-            versionNumber: `${versionNumber}.0`
+            versionNumber
         }
 
         if (renewalDate) manual.renewalDate = renewalDate
