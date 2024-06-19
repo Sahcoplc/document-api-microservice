@@ -229,17 +229,22 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
 
         let docNo = '001'
 
-        const document = await Document.findOne({ type: body.type }).sort({ createdAt: -1}).select('documentNo').lean()
+        const documents = await Document.find({ type: body.type, "department.name": deptName  }).sort({ createdAt: -1}).select('documentNo').lean()
 
-        if (document) {
-            let no = document.documentNo.split('/')[4]
-            if (typeof no === 'undefined') no = docNo
+        let documentNo = ''
+        const docDept = body.type === documentTypes.memo ? deptName.match(/\b(\w)/g).join('') : docDeptTitle[body.type]
+
+        if (documents.length) {
+            documentNo = documents[0].documentNo
+            let no = documents[0].documentNo.split('/')[4]
+            const replace = documentNo.split('/')[4]
             no = parseInt(no)
             no += 1
             docNo = `00${no}`
+            documentNo = documentNo.replace(replace, docNo)
+        } else {
+            documentNo = generateDocumentNo("F", docDept, matches, docNo) // SAHCO/FIN/F/TV/001
         }
-
-        const docDept = body.type === documentTypes.memo ? deptName.match(/\b(\w)/g).join('') : docDeptTitle[body.type]
 
         req.locals = {
             ...req.locals,
@@ -250,7 +255,7 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
                 parentStation: parent ? stationId : parentStation._id,
                 station: { name: code, _id: stationId },
                 department: { name: deptName, subDept },
-                documentNo: generateDocumentNo(true, docDept, matches, docNo),
+                documentNo,
             }
         }
 

@@ -94,7 +94,7 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
             previousVersions.push(...versions)
             previousVersions.unshift(manuals[0]._id)
         } else {
-            documentNo = generateDocumentNo(false, docType, name.match(/\b(\w)/g).join(''), matches, docNo)
+            documentNo = generateDocumentNo(docType, name.match(/\b(\w)/g).join(''), matches, docNo)
         }
 
         const revisedDate = body.revisedDate ? new Date(body.revisedDate) : null

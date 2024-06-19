@@ -59,4 +59,4 @@ export const pickRandomCharacters = (text, numChars) => {
     return randomChars.join('');
 }
 
-export const generateDocumentNo = (form = true, docType, deptCode, matches, docInteger) => `SAHCO/${deptCode}/${form ? 'F' : docType}/${matches}/${docInteger}`
+export const generateDocumentNo = (docType, deptCode, matches, docInteger) => `SAHCO/${deptCode}/${docType}/${matches}/${docInteger}` // SAHCO/I/M/HFO/002 // SAHCO/FIN/F/TV/001
