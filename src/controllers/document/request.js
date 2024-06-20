@@ -229,7 +229,7 @@ export const validateCreateDocument = asyncWrapper(async (req, res, next) => {
 
         let docNo = '001'
 
-        const documents = await Document.find({ type: body.type, "department.name": deptName  }).sort({ createdAt: -1}).select('documentNo').lean()
+        const documents = await Document.find({ type: body.type }).sort({ createdAt: -1}).select('documentNo').lean()
 
         let documentNo = ''
         const docDept = body.type === documentTypes.memo ? deptName.match(/\b(\w)/g).join('') : docDeptTitle[body.type]
