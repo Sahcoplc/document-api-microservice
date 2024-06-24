@@ -49,9 +49,9 @@ export const _arrayObjectToString = (arr, label) => {
   }
 };
 
-export const getDifferenceInDays = (expiresAt) => {
+export const getDifferenceInMonths = (expiresAt) => {
   const a = moment(new Date());
   const b = moment(expiresAt);
-  const difference = b.diff(a, 'days');
+  const difference = b.diff(a, 'months');
   return difference < 0 ? 0 : difference;
 };

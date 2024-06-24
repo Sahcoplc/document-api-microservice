@@ -1,8 +1,15 @@
 /* eslint-disable no-console */
 import { connectDB } from "./services/database.js"
 import server from "./server.js"
+import cron from 'node-cron'
+import { updateCertificateStatus } from "./helpers/fetch.js"
 
 const { PORT } = process.env
+
+cron.schedule('01 07 01 * * *', async () => {
+    console.log('Running cron job')
+    await updateCertificateStatus()
+})
 
 const serverStart = async () => {
     try {

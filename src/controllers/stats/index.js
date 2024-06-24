@@ -17,6 +17,7 @@ export const getDocumentStats = asyncWrapper(async (req, res) => {
             noOfPendingDocs: 0,
             noOfDeclinedDocs: 0
         }
+        console.log("DOC:: ", docs)
 
         for (const doc of docs) {
             const { approvalTrail } = doc
@@ -34,6 +35,7 @@ export const getDocumentStats = asyncWrapper(async (req, res) => {
 
         return success(res, 200, result)
     } catch (e) {
+        console.log("ERE:: ", e)
         return error(res, 500, e)
     }
 })

@@ -40,7 +40,9 @@ export const documentTypes = {
     allowanceExpensesClaims: "ALLOWANCES AND EXPENSES CLAIMS REINBURSEMENT/RETIREMENT",
     memo: "INTERNAL MEMO",
     cert: "CERTIFICATION",
-    manual: "MANUAL"
+    manual: "MANUAL",
+    license: "LICENSE",
+    contract: "CONTRACT"
 }
 
 export const docDeptTitle = {
@@ -63,10 +65,17 @@ export const documentMovementStatus = {
     completed: 'COMPLETED'
 }
 
+export const CONTRACT_TYPES = {
+    support: 'SUPPORT',
+    airline: 'AIRLINE'
+}
+
 export const manualStatus = {
     active: "ACTIVE",
     expired: "EXPIRED",
+    oneOff: "ONE-OFF",
+    retainer: "RETAINERSHIP",
     expireSoon(days) {
-        return `EXPIRING IN ${days} DAYS`
+        return `EXPIRING IN ${days} MONTHS`
     }
 }

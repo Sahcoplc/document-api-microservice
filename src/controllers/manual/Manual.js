@@ -4,7 +4,10 @@ import asyncWrapper from "../../middlewares/async.js";
 import { generateFilter, populate } from "./helper.js";
 import { paginate } from "../../helpers/paginate.js";
 import { manualStatus } from "../../base/request.js";
-import { getDifferenceInDays } from "../../utils/index.js";
+import { getDifferenceInMonths } from "../../utils/index.js";
+import { makeRequest } from "../../helpers/fetch.js";
+import { sendBulkMail } from "../../services/mail.js";
+import expiredCertificate from "../../mails/expired-certificate.js";
 
 export const uploadManual = asyncWrapper(async (req, res) => {
     try {
@@ -14,7 +17,10 @@ export const uploadManual = asyncWrapper(async (req, res) => {
 
         return success(res, 201, result)
     } catch (e) {
-        return error(res, 500, e)
+        let message = 'Something went wrong'
+        if ((e.message || e).includes("E11000 duplicate key error collection")) 
+            message = "Document updated version already exist"
+        return error(res, 500, message)
     }
 })
 
@@ -51,21 +57,60 @@ export const fetchSingleManual = asyncWrapper(async (req, res) => {
 
 export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) => {
     try {
-        const { locals: { manualsToExpire } } = req
+        const { locals: { manualsToExpire }, headers } = req
 
         let manuals = []
         await Promise.all(
             manualsToExpire.map(async manual => {
                 let doc
-                const daysToExpire = manual.dueDate ? getDifferenceInDays(manual.dueDate) : getDifferenceInDays(manual.renewalDate)
-                if (daysToExpire) {
+                const daysToExpire = manual.dueDate ? getDifferenceInMonths(manual.dueDate) : getDifferenceInMonths(manual.renewalDate)
+                if (daysToExpire > 0 && daysToExpire <= 6) {
                     doc = await Manual.findOneAndUpdate({ documentNo: manual.documentNo }, { $set: { status: manualStatus.expireSoon(daysToExpire) } }, { new: true })
-                } else {
+                    const manual_cert = {
+                        dept: doc.deptId,
+                        title: doc.title,
+                        documentNo: doc.documentNo,
+                        expiryDate: doc.status
+                    }
+                    manuals.push(manual_cert)
+                } else if (!daysToExpire || daysToExpire < 0){
                     doc = await Manual.findOneAndUpdate({ documentNo: manual.documentNo }, { $set: { status: manualStatus.expired } }, { new: true })
                 }
-                manuals.push(doc.documentNo)
             })
         )
+
+        manuals.forEach(async (manual) => {
+            const apikey = headers['x-sahcoapi-key']
+            try {
+                const query =  { department: manual.dept, page: 1, limit: 2000 }
+                const { data: { docs: employees } } = await makeRequest('GET', 'employees', apikey, {}, query)
+                const filteredEmployees = employees.map(employee => ({ email: employee.companyEmail, name: employee.fullName }))
+    
+                employees.forEach(async (filtered) => {
+                    const notification = {
+                        title: 'Document Expiring Soon',
+                        body: `${manual.title} from your department is ${manual.expiryDate}`,
+                        receiver: filtered._id,
+                        deptId: [manual.dept],
+                        isAll: false
+                    }
+                    await makeRequest('POST', 'alerts/new', apikey, notification)
+                })
+                
+                await sendBulkMail({
+                    receivers: filteredEmployees,
+                    subject: 'DOCUMENT EXPIRING SOON',
+                    body: expiredCertificate({
+                        title: 'DOCUMENT EXPIRING SOON',
+                        expireDate: manual.expiryDate,
+                        docName: manual.title,
+                    })
+                })
+            } catch (e) {
+                //
+            }
+
+        })
 
         return success(res, 200, manuals)
     } catch (e) {
