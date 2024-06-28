@@ -20,6 +20,7 @@ const schema = new Schema(
             email: { type: String, required: true },
             station: idAndNameSchemaRequired,
         },
+        copiedReceivers: [{ ...idAndNameSchema }],
         parentStationId: { type: String, required: true },
         purpose: { type: String, required: true, default: documentMovementPurpose.transfer },
         operator: idAndNameSchema,

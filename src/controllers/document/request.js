@@ -125,28 +125,13 @@ const facilitiesRepair = {
 }
 
 const memoDoc = {
-    from: Joi.object({
-        _id: Joi.string().required(),
-        name: Joi.string().required()
-    }).required(),
-    to: Joi.object({
-        _id: Joi.string().required(),
-        name: Joi.string().required()
-    }).required(),
-    copiedReceivers: Joi.array().items(
-        Joi.object({
-            _id: Joi.string().required(),
-            name: Joi.string().required()
-        })
-    ),
+    staffId: Joi.string().required(),
     title: Joi.string().required(),
     description: Joi.string().required(),
     signedBy: Joi.object({
         _id: Joi.string().required(),
         name: Joi.string().required()
-    }).required(),
-    isAllStaff: Joi.boolean(),
-    receivingDepts: Joi.array().items(Joi.string())
+    }).required()
 }
 
 export const createDocumentSchema = Joi.object({
@@ -218,13 +203,15 @@ export const filterDocSchema = Joi.object({
     startDate: Joi.date(),
     endDate: Joi.date().greater(Joi.ref("startDate")),
     type: Joi.string().valid(...Object.values(documentTypes)),
+    status: Joi.string().valid(...Object.values(approvalStatus)),
     documentNo: Joi.string()
 })
 
 export const approveDocSchema = Joi.object({
     isApproved: Joi.boolean().required(),
     comment: Joi.string().required(),
-    status: Joi.string().valid(...Object.values(approvalStatus)).required()
+    status: Joi.string().valid(...Object.values(approvalStatus)).required(),
+    approvedAmount: Joi.number()
 })
 
 export const approveIdsSchema = Joi.object({
@@ -287,7 +274,7 @@ export const validateUpdateDocument = asyncWrapper(async (req, res, next) => {
 
         if (doc.operator._id != _id) throw new BadRequest('Document not created or owned by you')
 
-        if (transfer && doc.approvalTrail.length > 0 && doc.approvalTrail[doc.approvalTrail.length - 1].status != approvalStatus.declined) {
+        if (transfer && doc.approvalTrail.length > 1 && doc.approvalTrail[doc.approvalTrail.length - 1].status != approvalStatus.requestChanges) {
             throw new BadRequest(`Document: ${type} has recently been approved`)
         }
 
@@ -302,7 +289,7 @@ export const validateUpdateDocument = asyncWrapper(async (req, res, next) => {
 
 export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
     try {
-        const { user: { _id: userId, fullName }, params: { id, movementId }, body } = req
+        const { user: { _id: userId, fullName, department: { name }, jobTitle: { name: job } }, params: { id, movementId }, body } = req
 
         const doc = await Document.findById({ _id: id }).select('approvalTrail operator').lean()
         const movement = await DocumentMovement.findById({ _id: movementId })
@@ -315,6 +302,9 @@ export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
         const approvalRequest = {
             _id: userId,
             name: fullName,
+            dept: name,
+            jobTitle: job,
+            approvalDate: new Date(),
             ...body
         }
         trail.push(approvalRequest)
@@ -325,6 +315,6 @@ export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
 
         return next()
     } catch (e) {
-        return error(res, 500, e) 
+        return error(res, e?.statusCode || 500, e) 
     }
 })

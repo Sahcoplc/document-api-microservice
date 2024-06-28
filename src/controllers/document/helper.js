@@ -1,25 +1,15 @@
 export const generateFilter = (req) => {
 
-    const { user: { _id, department: { _id: deptId } }, query } = req
-    let filter = { 
-        $or: [
-            {
-                "operator._id": _id,
-            },
-            {
-                "content.isAllStaff": true
-            },
-            {
-                "content.receivingDepts": { $in: [deptId] }
-            },
-            {
-                "content.copiedReceivers": { $elemMatch: { "_id": _id } }
-            }
-        ]
-    }
+    const { user: { _id }, query } = req
+
+    let filter = { "operator._id": _id }
 
     if (query.type) {
         filter = { ...filter, type: query.type }
+    }
+    
+    if (query.status) {
+        filter = { ...filter, status: query.status }
     }
 
     if (query.documentNo) filter = { ...filter, documentNo: query.documentNo }

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { createCustomError } from "../utils/errors/customError.js";
 
-const { SAHCO_HR_SERVER } = process.env
+const { SAHCO_HR_SERVER, SAHCO_DOCS_SERVER } = process.env
 
 const API = (baseURL, headers) => {
     
@@ -20,6 +20,7 @@ const defaultHeaders = {
 }
 
 const instance = API(SAHCO_HR_SERVER, defaultHeaders)
+const docsInstance = API(SAHCO_DOCS_SERVER, defaultHeaders)
 
 export const getProfile = async (apiKey) => {
 
@@ -73,6 +74,16 @@ export const sendNotification = async (apiKey, body) => {
                 "X-SAHCOAPI-KEY": apiKey
             }
         })
+        
+        return data
+    } catch (e) {
+        throw createCustomError(e?.response?.data?.message, e?.response?.status);
+    }
+}
+
+export const updateCertificateStatus = async () => {
+    try {
+        const { data } = await docsInstance.patch(`/manual/update-status`)
         
         return data
     } catch (e) {

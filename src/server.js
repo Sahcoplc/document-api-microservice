@@ -49,7 +49,7 @@ const getOrigin = (origin, callback) => {
 
 const corsOptions = {
   credentials: true,
-  origin: getOrigin,
+  origin: getOrigin
 };
 
 const options = {

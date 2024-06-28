@@ -3,7 +3,7 @@ import asyncWrapper from '../../middlewares/async.js'
 import { error } from '../../helpers/response.js'
 import Document from '../../models/Document.js'
 import BadRequest from '../../utils/errors/badRequest.js'
-import { documentMovementPurpose, documentMovementStatus, documentTypes } from '../../base/request.js'
+import { approvalStatus, documentMovementPurpose, documentMovementStatus, documentTypes } from '../../base/request.js'
 import { getEmployee } from '../../helpers/fetch.js'
 import DocumentMovement from '../../models/DocumentMovement.js'
 
@@ -18,6 +18,12 @@ export const createDocMovementSchema = Joi.object({
         _id: Joi.string().required(),
         name: Joi.string().required()
     }),
+    copiedReceivers: Joi.array().items(
+        Joi.object({
+            _id: Joi.string().required(),
+            name: Joi.string().required()
+        })
+    ),
     documentId: Joi.string().required()
 })
 
@@ -26,6 +32,9 @@ export const fetchTransferSchema = Joi.object({
     limit: Joi.number(),
     type: Joi.string().valid(...Object.values(documentTypes)),
     sender: Joi.string(),
+    documentId: Joi.string(),
+    documentNo: Joi.string(),
+    documentStatus: Joi.string().valid(...Object.values(approvalStatus)),
     sentByMe: Joi.bool().default(false),
     startDate: Joi.date(),
     endDate: Joi.date().greater(Joi.ref("startDate"))

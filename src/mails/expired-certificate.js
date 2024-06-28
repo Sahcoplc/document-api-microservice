@@ -1,7 +1,7 @@
 import { fancyDateNoTime } from "../utils/index.js";
 
 /* eslint-disable max-len */
-const documentInbox = ({ title, name, documentType, department, senderName, url }) => 
+const expiredCertificate = ({ title, name, documentType, department, senderName, url }) => 
 `<!DOCTYPE html>
 
     <head>
@@ -181,4 +181,4 @@ const documentInbox = ({ title, name, documentType, department, senderName, url 
     
     </html>`
 
-export default documentInbox;
+export default expiredCertificate;
