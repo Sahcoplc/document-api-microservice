@@ -64,6 +64,7 @@
     "read-excel-file": "^5.6.1",
     "redis": "^4.6.7",
     "request": "^2.88.2",
+    "request-promise": "^4.2.6",
     "rollbar": "^2.26.2",
     "scramjet": "^4.36.9",
     "socket.io": "^4.7.2",

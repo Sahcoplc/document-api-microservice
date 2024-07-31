@@ -3,13 +3,15 @@ import { error } from "../../helpers/response.js";
 import asyncWrapper from "../../middlewares/async.js";
 import { uploadFiles } from "../../services/storage.js";
 import Manual from "../../models/Manual.js";
-import { generateDocumentNo } from "../../controllers/document/helper.js";
-import { documentTypes, manualStatus } from "../../base/request.js";
+import { generateDocumentNo, pickRandomCharacters } from "../../controllers/document/helper.js";
+import { CONTRACT_TYPES, documentTypes, manualStatus } from "../../base/request.js";
 import { createCustomError } from "../../utils/errors/customError.js";
+import moment from "moment";
 
 export const uploadManualSchema = Joi.object({
     title: Joi.string().required(),
-    type: Joi.string().valid(documentTypes.manual, documentTypes.cert).required(),
+    recentVersion: Joi.string(),
+    type: Joi.string().valid(documentTypes.manual, documentTypes.cert, documentTypes.license, documentTypes.contract).required(),
     revisedDate: Joi.date().when('type', {
         is: documentTypes.manual,
         then: Joi.required()
@@ -23,12 +25,26 @@ export const uploadManualSchema = Joi.object({
         is: documentTypes.manual,
         then: Joi.required()
     }),
+    typeOfService: Joi.string().when('type', {
+        is: documentTypes.contract,
+        then: Joi.required()
+    }),
+    typeOfContract: Joi.string().valid(...Object.values(CONTRACT_TYPES)).when('type', {
+        is: documentTypes.contract,
+        then: Joi.required()
+    }),
+    contractStatus: Joi.string().valid(manualStatus.oneOff, manualStatus.retainer).when('type', {
+        is: documentTypes.contract,
+        then: Joi.required()
+    }),
     attachments: Joi.any().required()
 })
 
 export const fetchManualSchema = Joi.object({
     title: Joi.string(),
-    type: Joi.string().valid(documentTypes.manual, documentTypes.cert).required(),
+    type: Joi.string().valid(documentTypes.manual, documentTypes.cert, documentTypes.license, documentTypes.contract).required(),
+    typeOfContract: Joi.string().valid(...Object.values(CONTRACT_TYPES)),
+    contractStatus: Joi.string().valid(manualStatus.oneOff, manualStatus.retainer),
     dueDate: Joi.date(),
     issuedDate: Joi.date(),
     renewalDate: Joi.date(),
@@ -47,27 +63,38 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
         const folder = body.type === documentTypes.manual ? 'manuals' : 'certificates'
 
         if (body.attachments) body.attachments = await uploadFiles(body.attachments, folder)
-        const matches = body.title.match(/\b(\w)/g).join('');
+        const docType = body.type[0];
+        const matches = pickRandomCharacters(body.title, 3)
 
         let docNo = '001'
-        // Update previous versions if previous manual type or name exists
+        let manuals = []
+        // Check if previous versions if recentVersion id was sent
+        if (body.recentVersion) {
+            manuals = await Manual.find({ _id: body.recentVersion })
+        }
 
         // Find Manual by type
-        const manuals = await Manual.find({ title: body.title, type: body.type }).sort({ createdAt: -1 }).select('documentNo').lean()
+        // manuals = await Manual.find({ title: body.title, type: body.type }).sort({ createdAt: -1 }).select('documentNo').lean()
         // Create an array and push the ids into the array
 
         const previousVersions = []
         let versionNumber = '1.0'
+        let documentNo = ''
 
         if (manuals.length) {
-            let no = manuals[0].documentNo.split('/')[4]
-            if (typeof no === 'undefined') no = docNo
+            documentNo = manuals[0].documentNo
+            let no = documentNo.split('/')[4]
+            const replace = documentNo.split('/')[4]
             no = parseInt(no)
             no += 1
             docNo = `00${no}`
-            versionNumber = parseFloat(no)
-            let versions = manuals.map(manual => manual._id)
+            versionNumber = `${parseFloat(no)}.0`
+            documentNo = documentNo.replace(replace, docNo)
+            let versions = manuals[0].previousVersions
             previousVersions.push(...versions)
+            previousVersions.unshift(manuals[0]._id)
+        } else {
+            documentNo = generateDocumentNo(docType, name.match(/\b(\w)/g).join(''), matches, docNo)
         }
 
         const revisedDate = body.revisedDate ? new Date(body.revisedDate) : null
@@ -79,9 +106,9 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
             issuedDate: new Date(body.issuedDate),
             deptId,
             operator: { _id, name: fullName },
-            documentNo: generateDocumentNo(false, name.match(/\b(\w)/g).join(''), matches, docNo),
+            documentNo,
             previousVersions,
-            versionNumber: `${versionNumber}.0`
+            versionNumber
         }
 
         if (renewalDate) manual.renewalDate = renewalDate
@@ -102,13 +129,13 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
 export const validateExpiredManualsOrCertifications = asyncWrapper(async (req, res, next) => {
     try {
         const filter = { 
-            status: manualStatus.active,
+            status: { $ne: manualStatus.expired },
             $or: [
-                { dueDate: { $lt: new Date() } },
-                { renewalDate: { $lt: new Date() } },
+                { dueDate: { $lte: moment().add(6, 'months') } },
+                { renewalDate: { $lte: moment().add(6, 'months') } },
             ] 
         }
-        const manualsToExpire = await Manual.find(filter).select('documentNo type dueDate renewal').lean()
+        const manualsToExpire = await Manual.find(filter).lean()
 
         if (!manualsToExpire.length) throw createCustomError('No manuals or certicates expiring soon', 404)
 
