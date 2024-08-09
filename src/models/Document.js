@@ -10,7 +10,6 @@ const approvalSchema = {
     jobTitle: "String",
     comment: "String",
     approvedAmount: "Number",
-    isApproved: Boolean,
     status: { type: "String", default: approvalStatus.pending },
     approvalDate: { type: "Date" }
 }

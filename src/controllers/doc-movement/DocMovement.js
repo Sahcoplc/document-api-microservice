@@ -4,7 +4,7 @@ import asyncWrapper from "../../middlewares/async.js"
 import { sendMail } from "../../services/mail.js"
 import documentInbox from "../../mails/new-document.js"
 import { generateMovementFilter } from "./helper.js"
-import { sendNotification } from "../../helpers/fetch.js"
+import { makeRequest } from "../../helpers/fetch.js"
 import { paginate } from "../../helpers/paginate.js"
 
 class DocumentMovementControl {
@@ -21,10 +21,10 @@ class DocumentMovementControl {
                 isAll: false
             }
 
-            await sendNotification(apiKey, notify)
+            await makeRequest('POST', 'alerts/new', apiKey, notify)
 
             await sendMail({
-                email: movement.to.email,
+                receivers: [{email: movement.to.email, name: movement.to.name}],
                 subject: "DOCUMENT APPROVAL REQUEST",
                 body: documentInbox({
                     title: "DOCUMENT APPROVAL REQUEST",
@@ -32,7 +32,7 @@ class DocumentMovementControl {
                     department: movement.from.dept,
                     senderName: movement.from.name,
                     documentType: movement.type,
-                    url: `${process.env.SAHCO_INTERNALS}/docs/documents/view/${movement.documentId}`
+                    url: `${process.env.SAHCO_INTERNALS}/docs/documents/view/${movement.documentId}/${movement._id}/${movement.to._id}`
                 })
             })
 
@@ -48,7 +48,19 @@ class DocumentMovementControl {
 
             const filter = generateMovementFilter({ ...req.query, _id })
 
+            const secondGradeFilter = {}
+
+            if (req.query.documentNo) {
+                secondGradeFilter.documents = { $elemMatch: { "documentNo": req.query.documentNo } }
+            }
+            if (req.query.documentStatus) {
+                secondGradeFilter.documents = { $elemMatch: { "status": req.query.documentStatus } }
+            }
+
             const pipeline = [
+                {
+                    $match: filter
+                },
                 {
                     $lookup: {
                         from: "documents",
@@ -58,7 +70,7 @@ class DocumentMovementControl {
                     }
                 },
                 {
-                    $match: filter
+                    $match: secondGradeFilter
                 },
                 {
                     $project: {
@@ -86,7 +98,7 @@ class DocumentMovementControl {
 
             return success(res, 200, transferredDocs)
         } catch(e) {
-            return error(res, 500, e)
+            return error(res, e?.statusCode || 500, e)
         }
     })
 }

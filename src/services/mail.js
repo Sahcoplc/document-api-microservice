@@ -39,7 +39,6 @@ export const sendMail = async ({ receivers = [], subject, body }) => {
         if (sent.statusCode === 202) console.log("MAIL Sent successfully:: ")
         return sent
     } catch (e) {
-        console.log("MAIL ERR:: ", e)
         return e
     }
 }
@@ -67,25 +66,20 @@ export const sendMailWithAttachment = async ({ receivers = [], subject, body, at
     await mailersend.email.send(emailParams);
 }
 
-export const sendMailWithAxios = async ({ receivers = [], subject, body }) => {
-
-    const mailbody = {
-        from: {
-            name: "Skyway Aviation Handling Company Plc.",
-            email: MAILERSEND_SENDER,
-        },
-        to: receivers.map(receiver => ({ email: receiver.email, name: receiver.name })),
-        reply_to: {
-            email: "no-reply@sahcoplc.com"
-        },
-        subject,
-        html: body
-    }
+export const sendBulkMail = async ({ receivers = [], subject, body }) => {
+    const bulkMails = receivers.map(receiver => {
+        return new EmailParams()
+        .setFrom(sentFrom)
+        .setTo([new Recipient(receiver.email, receiver.name)])
+        .setReplyTo(replyTo)
+        .setSubject(subject)
+        .setHtml(body);
+    });
+   
     try {
-        const data = await instance.post('/email', mailbody)
-        
-        if (data.status === 202) console.log("MAIL Sent successfully:: ")
-        return data.status
+        const sent = await mailersend.email.sendBulk(bulkMails)
+        if (sent.statusCode === 202) console.log("MAIL Sent successfully:: ")
+        return sent
     } catch (e) {
         return e
     }

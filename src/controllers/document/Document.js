@@ -5,7 +5,7 @@ import asyncWrapper from "../../middlewares/async.js"
 import Document from "../../models/Document.js"
 import DocumentMovement from "../../models/DocumentMovement.js"
 import { generateFilter } from "./helper.js"
-import { getEmployee, sendNotification } from "../../helpers/fetch.js"
+import { makeRequest } from "../../helpers/fetch.js"
 import { startSession } from 'mongoose'
 import documentApproval from "../../mails/document-approval.js"
 import { documentMovementStatus } from "../../base/request.js"
@@ -108,20 +108,20 @@ class DocumentController {
                 isAll: false
             }
 
-            const { data } = await getEmployee(apiKey, approval.operator._id)
+            const { data } = await makeRequest('GET', 'employees', apiKey, {}, { id: approval.operator._id })
 
-            await sendNotification(apiKey, notify)
+            await makeRequest('POST', 'alerts/new', apiKey, notify)
 
             await sendMail({
-                email: data.companyEmail,
+                receivers: [{email: data.companyEmail, name: data.fullName}],
                 subject: "DOCUMENT APPROVAL",
                 body: documentApproval({
                     title: "DOCUMENT APPROVAL",
-                    name: approval.name,
+                    name: approval.operator.name,
                     department: transfer.to.dept,
                     senderName: transfer.to.name,
                     documentType: transfer.type,
-                    status: approvalRequest.status,
+                    status: status,
                     url: `${process.env.SAHCO_INTERNALS}/docs/documents/view/${id}/${movementId}/${transfer.to._id}`
                 })
             })
