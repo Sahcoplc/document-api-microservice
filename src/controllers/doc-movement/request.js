@@ -77,7 +77,7 @@ export const validateDocMovement = asyncWrapper(async (req, res, next) => {
                     name: data.fullName,
                     dept: data.department.name,
                     email: data.companyEmail,
-                    jobTitle: data.jobTitle,
+                    jobTitle: data?.jobTitle || data?.jobDesignation || data?.jobTitleCode,
                     station: {
                         _id: data.currentStation._id,
                         name: data.currentStation.code
