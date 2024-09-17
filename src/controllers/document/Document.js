@@ -108,11 +108,11 @@ class DocumentController {
                 isAll: false
             }
 
-            const { data } = await makeRequest('GET', 'employees', apiKey, {}, { id: approval.operator._id })
+            const { data } = await makeRequest('GET', 'employees', apiKey, {}, { name: approval.operator.name, page: 1, limit: 10 })
 
             await makeRequest('POST', 'alerts/new', apiKey, notify)
 
-            await sendMail({
+            sendMail({
                 receivers: [{email: data.companyEmail, name: data.fullName}],
                 subject: "DOCUMENT APPROVAL",
                 body: documentApproval({
@@ -121,7 +121,7 @@ class DocumentController {
                     department: transfer.to.dept,
                     senderName: transfer.to.name,
                     documentType: transfer.type,
-                    status: status,
+                    status,
                     url: `${process.env.SAHCO_INTERNALS}/docs/documents/view/${id}/${movementId}/${transfer.to._id}`
                 })
             })
