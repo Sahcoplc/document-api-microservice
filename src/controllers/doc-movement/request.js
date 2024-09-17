@@ -42,7 +42,7 @@ export const fetchTransferSchema = Joi.object({
 
 export const validateDocMovement = asyncWrapper(async (req, res, next) => {
     try {
-        const { user: { _id, companyEmail, fullName, jobTitle, apiKey, currentStation: { _id: stationId, code, parent, parentStationId }, department: { name } }, body: { type, documentId, to: { _id: receiverId } } } = req
+        const { user: { _id, companyEmail, fullName, jobTitle, jobDesignation, jobTitleCode, apiKey, currentStation: { _id: stationId, code, parent, parentStationId }, department: { name } }, body: { type, documentId, to: { _id: receiverId } } } = req
 
         const doc = await Document.findById({ _id: documentId }).lean()
 
@@ -67,7 +67,7 @@ export const validateDocMovement = asyncWrapper(async (req, res, next) => {
                     name: fullName,
                     dept: name,
                     email: companyEmail,
-                    jobTitle,
+                    jobTitle: jobTitle || jobDesignation || jobTitleCode,
                     station: {
                         _id: stationId, name: code
                     }
@@ -77,7 +77,7 @@ export const validateDocMovement = asyncWrapper(async (req, res, next) => {
                     name: data.fullName,
                     dept: data.department.name,
                     email: data.companyEmail,
-                    jobTitle: data.jobTitle,
+                    jobTitle: data?.jobTitle || data?.jobDesignation || data?.jobTitleCode,
                     station: {
                         _id: data.currentStation._id,
                         name: data.currentStation.code
