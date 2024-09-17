@@ -1,3 +1,21 @@
+## [1.1.2](https://github.com/Sahcoplc/document-api-microservice/compare/v1.1.1...v1.1.2) (2024-08-09)
+
+
+### Bug Fixes
+
+* add cron ([bcf728e](https://github.com/Sahcoplc/document-api-microservice/commit/bcf728e8e11ebbaee989dd863e4d6765aed74204))
+* document number ([ef972a6](https://github.com/Sahcoplc/document-api-microservice/commit/ef972a6cf7fd24fed14991f81d93cfa10ef04b00))
+* fetch transfer docs ([ff30827](https://github.com/Sahcoplc/document-api-microservice/commit/ff3082736170e39d38a842c3be091e8d46c79a07))
+* stats bug ([69dcb49](https://github.com/Sahcoplc/document-api-microservice/commit/69dcb491288671d56cabed6dedc502d8e5a2d764))
+
+## [1.1.1](https://github.com/Sahcoplc/document-api-microservice/compare/v1.1.0...v1.1.1) (2024-05-14)
+
+
+### Bug Fixes
+
+* fetch doc by status ([6e8603a](https://github.com/Sahcoplc/document-api-microservice/commit/6e8603af02e516f39b8dd9fb3cd8d0c946367766))
+* filter by documentId ([e636dcb](https://github.com/Sahcoplc/document-api-microservice/commit/e636dcbac6aaa87192d653aafe910d15b0836456))
+
 # [1.1.0](https://github.com/Sahcoplc/document-api-microservice/compare/v1.0.1...v1.1.0) (2024-04-10)
 
 
