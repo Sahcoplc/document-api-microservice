@@ -23,7 +23,7 @@ class DocumentMovementControl {
 
             await makeRequest('POST', 'alerts/new', apiKey, notify)
 
-            await sendMail({
+            sendMail({
                 receivers: [{email: movement.to.email, name: movement.to.name}],
                 subject: "DOCUMENT APPROVAL REQUEST",
                 body: documentInbox({
