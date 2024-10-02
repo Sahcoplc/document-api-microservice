@@ -1,12 +1,10 @@
 import Manual from "../../models/Manual.js";
 import { error, success } from "../../helpers/response.js";
 import asyncWrapper from "../../middlewares/async.js";
-import { generateFilter, populate } from "./helper.js";
+import { composeManual, generateFilter, populate } from "./helper.js";
 import { paginate } from "../../helpers/paginate.js";
-import { manualStatus } from "../../base/request.js";
-import { getDifferenceInMonths } from "../../utils/index.js";
 import { makeRequest } from "../../helpers/fetch.js";
-import { sendBulkMail } from "../../services/mail.js";
+import { sendBulkMail, sendMail } from "../../services/mail.js";
 import expiredCertificate from "../../mails/expired-certificate.js";
 import { createOutlookEvent } from "./event.js";
 
@@ -60,63 +58,61 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
     try {
         const { locals: { manualsToExpire }, headers } = req
 
-        let manuals = []
-        await Promise.all([
-            manualsToExpire.map(async manual => {
-                let doc
-                const daysToExpire = manual.dueDate ? getDifferenceInMonths(manual.dueDate) : getDifferenceInMonths(manual.renewalDate)
-                if (daysToExpire > 0 && daysToExpire <= 6) {
-                    doc = await Manual.findOneAndUpdate({ documentNo: manual.documentNo }, { $set: { status: manualStatus.expireSoon(daysToExpire) } }, { new: true })
-                    const manual_cert = {
-                        dept: doc.deptId,
-                        title: doc.title,
-                        documentNo: doc.documentNo,
-                        expiryDate: doc.status
-                    }
-                    manuals.push(manual_cert)
-                } else if (!daysToExpire || daysToExpire < 0){
-                    doc = await Manual.findOneAndUpdate({ documentNo: manual.documentNo }, { $set: { status: manualStatus.expired } }, { new: true })
-                }
-            }),
-            manuals.forEach(async (manual) => {
+        const manuals = await composeManual(manualsToExpire)
+
+        const response = await Promise.all(
+            manuals?.forEach(async (manual) => {
                 const apikey = headers['x-sahcoapi-key']
                 try {
-                    const query =  { department: manual.dept, page: 1, limit: 2000 }
+                    const query =  { department: manual.dept, page: 1, limit: 2000 } // update to senior
                     const { data: { docs: employees } } = await makeRequest('GET', 'employees', apikey, {}, query)
+                    const { data: dept } = await makeRequest('GET', `depts/${manual.dept}`, apikey, {}, {})
                     const filteredEmployees = employees.map(employee => ({ email: employee.companyEmail, name: employee.fullName }))
                     const attendees = employees.map(employee => ({ address: employee.companyEmail, name: employee.fullName }))
         
                     employees.forEach(async (filtered) => {
                         const notification = {
                             title: 'Document Expiring Soon',
-                            body: `${manual.title} from your department is ${manual.expiryDate}`,
+                            body: `${manual.title} from your department is ${manual.status}`,
                             receiver: filtered._id,
                             deptId: [manual.dept],
                             isAll: false
                         }
                         await makeRequest('POST', 'alerts/new', apikey, notification)
                     })
-
+    
                     await createOutlookEvent(manual, attendees)
                     
-                    await sendBulkMail({
+                    sendBulkMail({
                         receivers: filteredEmployees,
                         subject: 'DOCUMENT EXPIRING SOON',
                         body: expiredCertificate({
                             title: 'DOCUMENT EXPIRING SOON',
-                            expireDate: manual.expiryDate,
+                            expireDate: manual.status,
+                            docName: manual.title,
+                        })
+                    })
+                    
+                    sendMail({
+                        receivers: [{ email: dept.email, name: dept.name }],
+                        subject: 'DOCUMENT EXPIRING SOON',
+                        body: expiredCertificate({
+                            title: 'DOCUMENT EXPIRING SOON',
+                            expireDate: manual.status,
                             docName: manual.title,
                         })
                     })
                 } catch (e) {
-                    //
+                    console.log("NZSD:: ", e)
                 }
             })
-        ])
+        )
 
+        console.log('MAQ:: ', response)
 
         return success(res, 200, manuals)
     } catch (e) {
+        console.log("BEWQ:: ", e)
         return error(res, 500, e)
     }
 })

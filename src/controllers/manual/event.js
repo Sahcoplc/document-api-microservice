@@ -1,65 +1,36 @@
-import { Client } from "@microsoft/microsoft-graph-client"
-import { getAccessToken } from "./ms-auth.js";
 import moment from "moment";
-import 'isomorphic-fetch'
+import * as ics from 'ics'
 
 export async function createOutlookEvent(manual, attendees) {
-    console.log({manual})
   try {
-    // Get access token
-    const accessToken = await getAccessToken();
 
-    // Initialize Graph Client
-    const client = Client.init({
-      authProvider: (done) => {
-        done(null, accessToken); // Pass the token to the Graph Client
-      },
-    });
-
-    // Define event with a reminder
-    const event = {
-      subject: `DOCUMENT EXPIRING SOON: ${manual.title}`,
-      body: {
-        contentType: 'HTML',
-        content: `DOCUMENT EXPIRING SOON: ${manual.title} in ${moment(manual.expiryDate).fromNow()}`,
-      },
-      start: {
-        dateTime: manual.expiryDate,
-        timeZone: 'West Africa Time',
-      },
-      end: {
-        dateTime: manual.expiryDate,
-        timeZone: 'West Africa Time',
-      },
-      location: {
-        displayName: 'SAHCO Internals: SAH-Docs ',
-      },
-      attendees: [
-        {
-            emailAddress: {
-                address: 'gbemi.kotoye@outlook.com',
-                name: 'Attendee Name',
-            },
-            type: 'required',
-        },
-        {
-            emailAddress: {
-                address: 'gbemisola@tippgeber24.de',
-                name: 'Attendee Name',
-            },
-            type: 'required',
-        },
-      ],
-      reminderMinutesBeforeStart: 10, // Set reminder (e.g., 10 minutes before event)
-      isReminderOn: true, // Enable reminder
-    };
-
-    // Create the event in the calendar
-    const response = await client
-      .api('/me/events')
-      .post(event);
-
-    console.log('Event created successfully:', response);
+      const event = {
+        start: moment(manual.expiryDate).format('YYYY-M-D').split("-").map((a) => parseInt(a)),
+        start: moment(manual.expiryDate).add(1, 'day').format('YYYY-M-D').split("-").map((a) => parseInt(a)),
+        duration: { hours: 23, minutes: 30 },
+        title:`DOCUMENT EXPIRING SOON: ${manual.title}`,
+        description: `DOCUMENT EXPIRING SOON: ${manual.title} in ${manual.status}`,
+        location:  'SAHCO Internals: SAH-Docs ',
+        url: process.env.SAHCO_INTERNALS,
+        alarms: [
+          { action: 'display', description: 'Reminder', trigger: { hours: 2, minutes: 30, before: true }, repeat: 2 }
+        ],
+        productId: `${manual.title.toLowerCase()}/ics`,
+        categories: [manual.typeOfService],
+        status: 'CONFIRMED',
+        busyStatus: 'BUSY',
+        organizer: { name: 'SAHCO PLC', email: 'dev@sahcoplc.com' },
+        attendees
+      }
+      
+      ics.createEvent(event, (error, value) => {
+        if (error) {
+          console.log(error)
+          return
+        }
+        
+        console.log('Event created successfully:', value);
+      })
   } catch (error) {
     console.log('Error creating event:', error);
   }

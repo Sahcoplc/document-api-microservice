@@ -10,7 +10,7 @@ import { paginate } from "../../helpers/paginate.js"
 class DocumentMovementControl {
     sendDocument = asyncWrapper(async (req, res) => {
         try {
-            const { locals: { docMovement }, user: { apiKey } } = req
+            const { locals: { docMovement }, user: { apiKey, department: { email, name } } } = req
 
             const movement = await new DocumentMovement(docMovement).save()
 
@@ -29,6 +29,19 @@ class DocumentMovementControl {
                 body: documentInbox({
                     title: "DOCUMENT APPROVAL REQUEST",
                     name: movement.to.name,
+                    department: movement.from.dept,
+                    senderName: movement.from.name,
+                    documentType: movement.type,
+                    url: `${process.env.SAHCO_INTERNALS}/docs/documents/view/${movement.documentId}/${movement._id}/${movement.to._id}`
+                })
+            })
+            
+            sendMail({
+                receivers: [{ email, name }],
+                subject: "DOCUMENT APPROVAL REQUEST",
+                body: documentInbox({
+                    title: "DOCUMENT APPROVAL REQUEST",
+                    name: name,
                     department: movement.from.dept,
                     senderName: movement.from.name,
                     documentType: movement.type,
