@@ -27,6 +27,11 @@ export const createDocMovementSchema = Joi.object({
     documentId: Joi.string().required()
 })
 
+export const cancelDocMovementSchema = Joi.object({
+    documentId: Joi.string().label('Document ID').required(),
+    movementId: Joi.string().label('Movement ID').required()
+})
+
 export const fetchTransferSchema = Joi.object({
     page: Joi.number().required(),
     limit: Joi.number(),

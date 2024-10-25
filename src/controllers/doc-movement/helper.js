@@ -10,7 +10,8 @@ export const generateMovementFilter = (query) => {
             {
                 copiedReceivers: { $elemMatch: { "_id": query._id } }
             }
-        ]
+        ],
+        status: { $ne: documentMovementStatus.canceled }
     }
 
     if (query.type) {
