@@ -120,50 +120,20 @@ class DocumentMovementControl {
     cancelDocumentMovement = asyncWrapper(async (req, res) => {
         try {
             const { user: { _id }, body: { documentId, movementId } } = req;
+            const filter = {
+                documentId,
+                _id: movementId,
+                "from._id": _id
+            }
 
-            // fetch movement with pipeline
-            const pipeline = [
-                {
-                    $match: {
-                        documentId,
-                        _id: movementId,
-                        "operator._id": _id
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "documents",
-                        localField: "documentId",
-                        foreignField: "_id",
-                        as: "documents"
-                    }
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        type: 1,
-                        from: 1,
-                        to: 1,
-                        purpose: 1,
-                        documentId: 1,
-                        status: 1,
-                        document: {
-                          $arrayElemAt: ["$documents", 0]
-                        }
-                    }
-                }
-            ]
-
-            const movements = await DocumentMovement.aggregate(pipeline)
-            const movement = movements[0]
-
-            // check if doc is for user
-            if (movement.document.operator._id !== _id) {
-                throw new BadRequest('Document does not belong to user')
+            const movement = await DocumentMovement.findOne(filter).populate('documentId')
+            
+            // check if doc has been approved
+            if (movement.status === documentMovementStatus.completed) {
+                throw new BadRequest('Document has been attended to')
             }
 
             // cancel movement
-
             await DocumentMovement.findOneAndUpdate({ _id: movementId }, { $set: { status: documentMovementStatus.canceled }})
             
             return success(res, 200);
