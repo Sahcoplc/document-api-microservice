@@ -17,6 +17,10 @@ export const generateMovementFilter = (query) => {
     if (query.type) {
         filter = { ...filter, type: query.type }
     }
+    
+    if (query.trash) {
+        filter = { status: documentMovementStatus.canceled }
+    }
 
     if (query.sender) {
         const regex = new RegExp(`${query.sender}`, 'i');
@@ -34,7 +38,7 @@ export const generateMovementFilter = (query) => {
                     'from._id': query._id
                 }
             ],
-            status: { $in: Object.values(documentMovementStatus) }
+            status: { $in: ["PENDING", "COMPLETED"] }
         }
     }
 
