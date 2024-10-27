@@ -18,7 +18,7 @@ export const generateMovementFilter = (query) => {
         filter = { ...filter, type: query.type }
     }
     
-    if (query.trash) {
+    if (query.isTrash) {
         filter = { status: documentMovementStatus.canceled }
     }
 
@@ -38,7 +38,7 @@ export const generateMovementFilter = (query) => {
                     'from._id': query._id
                 }
             ],
-            status: { $in: ["PENDING", "COMPLETED"] }
+            status: { $in: [documentMovementStatus.pending, documentMovementStatus.completed] }
         }
     }
 
