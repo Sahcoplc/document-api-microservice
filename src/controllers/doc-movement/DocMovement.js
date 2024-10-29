@@ -8,6 +8,7 @@ import { makeRequest } from "../../helpers/fetch.js"
 import { paginate } from "../../helpers/paginate.js"
 import BadRequest from "../../utils/errors/badRequest.js"
 import { documentMovementStatus } from "../../base/request.js"
+import { createCustomError } from "utils/errors/customError.js"
 
 class DocumentMovementControl {
     sendDocument = asyncWrapper(async (req, res) => {
@@ -127,6 +128,10 @@ class DocumentMovementControl {
             }
 
             const movement = await DocumentMovement.findOne(filter).populate('documentId')
+
+            if (!movement) {
+                throw createCustomError('Document Transfer does not exist', 404) 
+            }
             
             // check if doc has been approved
             if (movement.status === documentMovementStatus.completed) {
