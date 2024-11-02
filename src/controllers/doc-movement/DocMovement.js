@@ -6,11 +6,14 @@ import documentInbox from "../../mails/new-document.js"
 import { generateMovementFilter } from "./helper.js"
 import { makeRequest } from "../../helpers/fetch.js"
 import { paginate } from "../../helpers/paginate.js"
+import BadRequest from "../../utils/errors/badRequest.js"
+import { documentMovementStatus } from "../../base/request.js"
+import { createCustomError } from "utils/errors/customError.js"
 
 class DocumentMovementControl {
     sendDocument = asyncWrapper(async (req, res) => {
         try {
-            const { locals: { docMovement }, user: { apiKey } } = req
+            const { locals: { docMovement }, user: { apiKey, department: { email, name } } } = req
 
             const movement = await new DocumentMovement(docMovement).save()
 
@@ -29,6 +32,19 @@ class DocumentMovementControl {
                 body: documentInbox({
                     title: "DOCUMENT APPROVAL REQUEST",
                     name: movement.to.name,
+                    department: movement.from.dept,
+                    senderName: movement.from.name,
+                    documentType: movement.type,
+                    url: `${process.env.SAHCO_INTERNALS}/docs/documents/view/${movement.documentId}/${movement._id}/${movement.to._id}`
+                })
+            })
+            
+            sendMail({
+                receivers: [{ email, name }],
+                subject: "DOCUMENT APPROVAL REQUEST",
+                body: documentInbox({
+                    title: "DOCUMENT APPROVAL REQUEST",
+                    name: name,
                     department: movement.from.dept,
                     senderName: movement.from.name,
                     documentType: movement.type,
@@ -98,6 +114,35 @@ class DocumentMovementControl {
 
             return success(res, 200, transferredDocs)
         } catch(e) {
+            return error(res, e?.statusCode || 500, e)
+        }
+    })
+
+    cancelDocumentMovement = asyncWrapper(async (req, res) => {
+        try {
+            const { user: { _id }, body: { documentId, movementId } } = req;
+            const filter = {
+                documentId,
+                _id: movementId,
+                "from._id": _id
+            }
+
+            const movement = await DocumentMovement.findOne(filter).populate('documentId')
+
+            if (!movement) {
+                throw createCustomError('Document Transfer does not exist', 404) 
+            }
+            
+            // check if doc has been approved
+            if (movement.status === documentMovementStatus.completed) {
+                throw new BadRequest('Document has been attended to')
+            }
+
+            // cancel movement
+            await DocumentMovement.findOneAndUpdate({ _id: movementId }, { $set: { status: documentMovementStatus.canceled }})
+            
+            return success(res, 200);
+        } catch (e) {
             return error(res, e?.statusCode || 500, e)
         }
     })

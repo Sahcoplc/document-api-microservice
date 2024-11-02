@@ -10,11 +10,16 @@ export const generateMovementFilter = (query) => {
             {
                 copiedReceivers: { $elemMatch: { "_id": query._id } }
             }
-        ]
+        ],
+        status: { $ne: documentMovementStatus.canceled }
     }
 
     if (query.type) {
         filter = { ...filter, type: query.type }
+    }
+    
+    if (query.isTrash) {
+        filter = { status: documentMovementStatus.canceled }
     }
 
     if (query.sender) {
@@ -33,7 +38,7 @@ export const generateMovementFilter = (query) => {
                     'from._id': query._id
                 }
             ],
-            status: { $in: Object.values(documentMovementStatus) }
+            status: { $in: [documentMovementStatus.pending, documentMovementStatus.completed] }
         }
     }
 

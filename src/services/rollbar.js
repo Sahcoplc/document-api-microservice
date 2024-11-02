@@ -1,10 +1,10 @@
 // include and initialize the rollbar library with your access token
 import Rollbar from "rollbar"
 
-const { ROLLBAR_TOKEN } = process.env
+const { ROLLBAR_TOKEN, NODE_ENV } = process.env
 
 export const rollbar = new Rollbar({
-  accessToken: ROLLBAR_TOKEN,
+  accessToken: NODE_ENV === 'development' ? null : ROLLBAR_TOKEN,
   captureUncaught: true,
   captureUnhandledRejections: true,
   payload: {
