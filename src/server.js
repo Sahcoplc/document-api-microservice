@@ -84,6 +84,7 @@ app.use(
 
 global.__basedir = __dirname;
 
+app.get('/health', (_, res) => res.json({ message: 'Okay' }));
 // Routes
 app.use(`/api`, apiBusy, authMiddleware, routes);
 
