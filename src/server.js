@@ -85,7 +85,7 @@ app.use(
 global.__basedir = __dirname;
 
 // Routes
-app.use(`/api`, apiBusy, rateLimiter, authMiddleware, routes);
+app.use(`/api`, apiBusy, authMiddleware, routes);
 
 // Use the rollbar error handler to send exceptions to your rollbar account
 (NODE_ENV !== 'test' && app.use(rollbar.errorHandler()))

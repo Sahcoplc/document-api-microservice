@@ -62,7 +62,8 @@ export const documentMovementPurpose = {
 
 export const documentMovementStatus = {
     pending: 'PENDING',
-    completed: 'COMPLETED'
+    completed: 'COMPLETED',
+    canceled: 'CANCELED'
 }
 
 export const CONTRACT_TYPES = {

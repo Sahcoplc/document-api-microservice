@@ -293,7 +293,7 @@ export const validateUpdateDocument = asyncWrapper(async (req, res, next) => {
 
 export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
     try {
-        const { user: { _id: userId, fullName, department: { name }, jobTitle: { name: job } }, params: { id, movementId }, body } = req
+        const { user: { _id: userId, fullName, department: { name }, jobTitle, jobDesignation, jobTitleCode }, params: { id, movementId }, body } = req
 
         const doc = await Document.findById({ _id: id }).select('approvalTrail operator').lean()
         const movement = await DocumentMovement.findById({ _id: movementId })
@@ -307,7 +307,7 @@ export const validateApproveDocument = asyncWrapper(async (req, res, next) => {
             _id: userId,
             name: fullName,
             dept: name,
-            jobTitle: job,
+            jobTitle: jobTitle || jobDesignation || jobTitleCode,
             approvalDate: new Date(),
             ...body
         }

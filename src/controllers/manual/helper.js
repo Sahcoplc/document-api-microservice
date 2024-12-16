@@ -1,3 +1,7 @@
+import { manualStatus } from "../../base/request.js";
+import Manual from "../../models/Manual.js";
+import { getDifferenceInMonths } from "../../utils/index.js";
+
 export const generateFilter = (query) => {
     let filter = { deptId: query.deptId }
 
@@ -62,3 +66,44 @@ export const populate = () => [
         select: "-previousVersions"
     }
 ]
+
+export const composeManual = async (manualsToExpire) => {
+
+    const composedMan = await Promise.all(
+        manualsToExpire.map(async (manual) => {
+            let doc;
+            const daysToExpire = manual.dueDate ? getDifferenceInMonths(manual.dueDate) : getDifferenceInMonths(manual.renewalDate);
+            
+            if (daysToExpire > 0 && daysToExpire <= 6) {
+                doc = await Manual.findOneAndUpdate(
+                    { documentNo: manual.documentNo },
+                    { $set: { status: manualStatus.expireSoon(daysToExpire) } },
+                    { new: true }
+                );
+                const manual_cert = {
+                    dept: doc.deptId,
+                    title: doc.title,
+                    documentNo: doc.documentNo,
+                    status: doc.status,
+                    expiryDate: doc.dueDate ?? doc.renewalDate,
+                };
+                return manual_cert;
+            } else if (!daysToExpire || daysToExpire < 0) {
+                doc = await Manual.findOneAndUpdate(
+                    { documentNo: manual.documentNo },
+                    { $set: { status: manualStatus.expired } },
+                    { new: true }
+                );
+                return {
+                    dept: doc.deptId,
+                    title: doc.title,
+                    documentNo: doc.documentNo,
+                    status: doc.status,
+                    expiryDate: doc.dueDate ?? doc.renewalDate,
+                };
+            }
+        })
+    );
+
+    return composedMan
+}
