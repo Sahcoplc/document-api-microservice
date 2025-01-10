@@ -66,7 +66,7 @@ export const makeRequest = async (method, endpoint, token, data, query) => {
           
         return res
     } catch (e) {
-        console.log(`REDF:::${endpoint}:: `, e)
-        throw createCustomError(e?.response?.data?.message, e?.response?.status);
+        console.log(`REDF:::${endpoint}:: `, e.error)
+        throw createCustomError(e?.error?.message, e?.statusCode);
     }
 }

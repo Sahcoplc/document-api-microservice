@@ -56,17 +56,17 @@ export const fetchSingleManual = asyncWrapper(async (req, res) => {
 
 export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) => {
     try {
-        const { locals: { manualsToExpire }, headers } = req
+        const { locals: { manualsToExpire } } = req
 
         const manuals = await composeManual(manualsToExpire)
         console.log({manuals})
         const response = await Promise.all(
             manuals?.forEach(async (manual) => {
-                const apikey = headers['x-sahcoapi-key']
+                // const apikey = headers['x-sahcoapi-key']
                 try {
                     const query =  { department: manual.dept, page: 1, limit: 2000 } // update to senior
-                    const { data: { docs: employees } } = await makeRequest('GET', 'employees', apikey, {}, query)
-                    const { data: dept } = await makeRequest('GET', `depts/${manual.dept}`, apikey, {}, {})
+                    const { data: { docs: employees } } = await makeRequest('GET', 'employees', '', {}, query)
+                    const { data: dept } = await makeRequest('GET', `depts/${manual.dept}`, '', {}, {})
                     const filteredEmployees = employees.map(employee => ({ email: employee.companyEmail, name: employee.fullName }))
                     const attendees = employees.map(employee => ({ address: employee.companyEmail, name: employee.fullName }))
         
@@ -78,7 +78,7 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
                             deptId: [manual.dept],
                             isAll: false
                         }
-                        await makeRequest('POST', 'alerts/new', apikey, notification)
+                        await makeRequest('POST', 'alerts/new', '', notification)
                     })
     
                     await createOutlookEvent(manual, attendees)
