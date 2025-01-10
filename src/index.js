@@ -6,8 +6,8 @@ import { updateCertificateStatus } from "./helpers/fetch.js"
 
 const { PORT } = process.env
 
-cron.schedule('01 07 01 * * *', async () => {
-    console.log('Running cron job')
+cron.schedule('01 02 * * * *', async () => {
+    console.log('Running cron job -----')
     await updateCertificateStatus()
 })
 
@@ -27,4 +27,4 @@ const serverStart = async () => {
     }
 }
 
-serverStart()
+await serverStart()

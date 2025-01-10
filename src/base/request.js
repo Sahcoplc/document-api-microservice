@@ -7,7 +7,7 @@ export const openRoutes = [
     { method: "PATCH", path: "/manual/update-status"}
 ]
 
-export const validator = createValidator()
+export const validator = createValidator();
 
 export const idSchema = Joi.object({
     id: Joi.string().required()

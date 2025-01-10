@@ -8,7 +8,7 @@ import { makeRequest } from "../../helpers/fetch.js"
 import { paginate } from "../../helpers/paginate.js"
 import BadRequest from "../../utils/errors/badRequest.js"
 import { documentMovementStatus } from "../../base/request.js"
-import { createCustomError } from "utils/errors/customError.js"
+import { createCustomError } from "../../utils/errors/customError.js"
 
 class DocumentMovementControl {
     sendDocument = asyncWrapper(async (req, res) => {
