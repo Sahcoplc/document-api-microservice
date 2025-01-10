@@ -11,7 +11,7 @@ import MongoStore from "connect-mongo";
 import { io } from "./helpers/socket.js";
 import { __dirname } from "./__Globals.js";
 import notFound from "./middlewares/notFound.js";
-import { apiBusy, rateLimiter } from "./middlewares/rateLimit.js";
+import { apiBusy } from "./middlewares/rateLimit.js";
 import errorHandlerMiddleware from "./middlewares/errorHandler.js";
 import routes from "./routes/index.js";
 import authMiddleware from "./base/auth.js";

@@ -129,12 +129,23 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
 export const validateExpiredManualsOrCertifications = asyncWrapper(async (req, res, next) => {
     try {
         const filter = { 
-            status: { $ne: manualStatus.expired },
+            status: { $ne: manualStatus.expired }, // Fetch items that are not expired
             $or: [
-                { dueDate: { $lte: moment().add(6, 'months') } },
-                { renewalDate: { $lte: moment().add(6, 'months') } },
-            ] 
-        }
+                { 
+                    dueDate: { 
+                        // $gte: moment().toDate(), 
+                        $lte: moment().add(6, 'months').toDate() 
+                    } 
+                }, // Due date within 6 months from now
+                { 
+                    renewalDate: { 
+                        // $gte: moment().toDate(), 
+                        $lte: moment().add(6, 'months').toDate() 
+                    } 
+                } // Renewal date within 6 months from now
+            ]
+        };
+        
         const manualsToExpire = await Manual.find(filter).lean()
 
         if (!manualsToExpire.length) throw createCustomError('No manuals or certicates expiring soon', 404)

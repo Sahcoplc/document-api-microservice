@@ -59,7 +59,7 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
         const { locals: { manualsToExpire }, headers } = req
 
         const manuals = await composeManual(manualsToExpire)
-
+        console.log({manuals})
         const response = await Promise.all(
             manuals?.forEach(async (manual) => {
                 const apikey = headers['x-sahcoapi-key']
