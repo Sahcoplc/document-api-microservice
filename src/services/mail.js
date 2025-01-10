@@ -81,7 +81,6 @@ export const sendBulkMail = async ({ receivers = [], subject, body }) => {
         if (sent.statusCode === 202) console.log("MAIL Sent successfully:: ")
         return sent
     } catch (e) {
-        console.log({e})
         return e
     }
 }
