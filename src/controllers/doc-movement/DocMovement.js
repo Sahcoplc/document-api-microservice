@@ -24,7 +24,7 @@ class DocumentMovementControl {
                 isAll: false
             }
 
-            await makeRequest('POST', 'alerts/new', apiKey, notify)
+            await makeRequest('POST', 'alerts/new', apiKey, notify, {})
 
             sendMail({
                 receivers: [{email: movement.to.email, name: movement.to.name}],

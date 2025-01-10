@@ -47,7 +47,7 @@ export const updateCertificateStatus = async () => {
     }
 }
 
-export const makeRequestAxios = async (method, endpoint, token, data, query) => {
+export const makeRequest = async (method, endpoint, token, data, query) => {
     try {
         const uri = `${SAHCO_HR_SERVER}/${endpoint}`
         const options = {
@@ -70,7 +70,7 @@ export const makeRequestAxios = async (method, endpoint, token, data, query) => 
     }
 }
 
-export const makeRequest = async (method, endpoint, token, data, params) => {
+export const makeRequestAxios = async (method, endpoint, token, data, params) => {
     try {
         const uri = `${SAHCO_HR_SERVER}/${endpoint}`
         const options = {

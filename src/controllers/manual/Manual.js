@@ -63,10 +63,10 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
                 try {
                     const query =  { department: manual.dept, page: 1, limit: 2000 } // update to senior
                     const { data: { docs: employees } } = await makeRequest('GET', 'employees', '', {}, query)
-                    const { data: dept } = await makeRequest('GET', `depts/${manual.dept}`, '', {}, {})
+                    const { data: depts } = await makeRequest('GET', `depts`, '', {}, {})
                     const filteredEmployees = employees.map(employee => ({ email: employee.companyEmail, name: employee.fullName }))
                     // const attendees = employees.map(employee => ({ address: employee.companyEmail, name: employee.fullName }))
-        
+                    const dept = depts.find(d => d._id === manual.dept)
                     employees.forEach(async (filtered) => {
                         const notification = {
                             title: 'Document Expiring Soon',
@@ -107,7 +107,6 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
 
         return success(res, 200, manuals)
     } catch (e) {
-        console.log("BEWQ:: ", e)
         return error(res, 500, e)
     }
 })

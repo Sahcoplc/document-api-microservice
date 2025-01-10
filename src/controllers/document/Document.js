@@ -110,7 +110,7 @@ class DocumentController {
 
             const { data } = await makeRequest('GET', 'employees', apiKey, {}, { name: approval.operator.name, page: 1, limit: 10 })
 
-            await makeRequest('POST', 'alerts/new', apiKey, notify)
+            await makeRequest('POST', 'alerts/new', apiKey, notify, {})
 
             sendMail({
                 receivers: [{email: data.companyEmail, name: data.fullName}],
