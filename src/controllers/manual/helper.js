@@ -73,7 +73,6 @@ export const composeManual = async (manualsToExpire) => {
         manualsToExpire.map(async (manual) => {
             let doc;
             const daysToExpire = manual.dueDate ? getDifferenceInMonths(manual.dueDate) : getDifferenceInMonths(manual.renewalDate);
-            console.log({daysToExpire})
             
             if (daysToExpire > 0 && daysToExpire <= 6) {
                 doc = await Manual.findOneAndUpdate(
@@ -103,10 +102,8 @@ export const composeManual = async (manualsToExpire) => {
                     expiryDate: doc.dueDate ?? doc.renewalDate,
                 };
             }
-            console.lo({doc})
         })
     );
-    console.log({composedMan})
 
     return composedMan
 }

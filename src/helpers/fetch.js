@@ -47,7 +47,7 @@ export const updateCertificateStatus = async () => {
     }
 }
 
-export const makeRequest = async (method, endpoint, token, data, query) => {
+export const makeRequestAxios = async (method, endpoint, token, data, query) => {
     try {
         const uri = `${SAHCO_HR_SERVER}/${endpoint}`
         const options = {
@@ -66,7 +66,32 @@ export const makeRequest = async (method, endpoint, token, data, query) => {
           
         return res
     } catch (e) {
-        console.log(`REDF:::${endpoint}:: `, e.error)
+        throw createCustomError(e?.error?.message, e?.statusCode);
+    }
+}
+
+export const makeRequest = async (method, endpoint, token, data, params) => {
+    try {
+        const uri = `${SAHCO_HR_SERVER}/${endpoint}`
+        const options = {
+            uri,
+            method,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-SAHCOAPI-KEY": token
+            },
+            json: true // Automatically parses the JSON string in the response
+        };
+        if (data && Object.keys(data).length > 0) options.body = data
+        if (params && Object.keys(params).length > 0) options.qs = params
+        // const res = await request(options)
+        const resp = await axios[method.toLowerCase()](uri, { ...(method === 'GET') ? { params } : (method === 'POST' && data && Object.keys(data).length > 0) ? { ...data } : {} }, {
+            headers: options.headers
+        })
+          
+        return resp?.data
+    } catch (e) {
         throw createCustomError(e?.error?.message, e?.statusCode);
     }
 }

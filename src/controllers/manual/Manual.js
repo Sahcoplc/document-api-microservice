@@ -6,7 +6,6 @@ import { paginate } from "../../helpers/paginate.js";
 import { makeRequest } from "../../helpers/fetch.js";
 import { sendBulkMail, sendMail } from "../../services/mail.js";
 import expiredCertificate from "../../mails/expired-certificate.js";
-import { createOutlookEvent } from "./event.js";
 
 export const uploadManual = asyncWrapper(async (req, res) => {
     try {
@@ -59,16 +58,14 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
         const { locals: { manualsToExpire } } = req
 
         const manuals = await composeManual(manualsToExpire)
-        console.log({manuals})
-        const response = await Promise.all(
+        // const response = await Promise.all(
             manuals?.forEach(async (manual) => {
-                // const apikey = headers['x-sahcoapi-key']
                 try {
                     const query =  { department: manual.dept, page: 1, limit: 2000 } // update to senior
                     const { data: { docs: employees } } = await makeRequest('GET', 'employees', '', {}, query)
                     const { data: dept } = await makeRequest('GET', `depts/${manual.dept}`, '', {}, {})
                     const filteredEmployees = employees.map(employee => ({ email: employee.companyEmail, name: employee.fullName }))
-                    const attendees = employees.map(employee => ({ address: employee.companyEmail, name: employee.fullName }))
+                    // const attendees = employees.map(employee => ({ address: employee.companyEmail, name: employee.fullName }))
         
                     employees.forEach(async (filtered) => {
                         const notification = {
@@ -78,10 +75,10 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
                             deptId: [manual.dept],
                             isAll: false
                         }
-                        await makeRequest('POST', 'alerts/new', '', notification)
+                        await makeRequest('POST', 'alerts/new', '', notification, {})
                     })
     
-                    await createOutlookEvent(manual, attendees)
+                    // await createOutlookEvent(manual, attendees)
                     
                     sendBulkMail({
                         receivers: filteredEmployees,
@@ -106,9 +103,7 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
                     console.log("NZSD:: ", e)
                 }
             })
-        )
-
-        console.log('MAQ:: ', response)
+        // )
 
         return success(res, 200, manuals)
     } catch (e) {
