@@ -6,6 +6,8 @@ import { paginate } from "../../helpers/paginate.js";
 import { makeRequest } from "../../helpers/fetch.js";
 import { sendBulkMail, sendMail } from "../../services/mail.js";
 import expiredCertificate from "../../mails/expired-certificate.js";
+import { documentTypes } from "base/request.js";
+import { uploadFiles } from "services/storage.js";
 
 export const uploadManual = asyncWrapper(async (req, res) => {
     try {
@@ -18,6 +20,33 @@ export const uploadManual = asyncWrapper(async (req, res) => {
         let message = 'Something went wrong'
         if ((e.message || e).includes("E11000 duplicate key error collection")) 
             message = "Document updated version already exist"
+        return error(res, 500, message)
+    }
+})
+
+export const editManual = asyncWrapper(async (req, res) => {
+    try {
+        const { body, params: { id } } = req;
+
+        const found = await Manual.findById(id).lean()
+        
+        if (!found) {
+            return error(res, 400, 'Document does not exist')
+        }
+
+        // Upload files attached to AWS SE storage
+        const folder = body.type === documentTypes.manual ? 'manuals' : 'certificates'
+
+        if (body.attachments) {
+            body.attachments = await uploadFiles(body.attachments, folder)
+            if (found.attachments.length) 
+                body.attachments.push(found.attachments)
+        }
+
+        const result = await Manual.findByIdAndUpdate({ id }, { $set: body }, { new: true })
+
+        return success(res, 200, result)
+    } catch (e) {
         return error(res, 500, message)
     }
 })
