@@ -37,10 +37,10 @@ export const editManual = asyncWrapper(async (req, res) => {
         // Upload files attached to AWS SE storage
         const folder = body.type === documentTypes.manual ? 'manuals' : 'certificates'
 
-        if (body.attachments) {
-            body.attachments = await uploadFiles(body.attachments, folder)
-            if (found.attachments.length) 
-                body.attachments.push(found.attachments)
+        if (body.files) {
+            const newattach = await uploadFiles(body.files, folder)
+            body.attachments.push(...newattach)
+            delete body.files
         }
 
         const result = await Manual.findByIdAndUpdate({ id }, { $set: body }, { new: true })
