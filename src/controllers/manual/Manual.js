@@ -6,8 +6,8 @@ import { paginate } from "../../helpers/paginate.js";
 import { makeRequest } from "../../helpers/fetch.js";
 import { sendBulkMail, sendMail } from "../../services/mail.js";
 import expiredCertificate from "../../mails/expired-certificate.js";
-import { documentTypes } from "base/request.js";
-import { uploadFiles } from "services/storage.js";
+import { documentTypes } from "../../base/request.js";
+import { uploadFiles } from "../../services/storage.js";
 
 export const uploadManual = asyncWrapper(async (req, res) => {
     try {
