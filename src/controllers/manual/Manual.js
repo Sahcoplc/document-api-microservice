@@ -4,7 +4,7 @@ import asyncWrapper from "../../middlewares/async.js";
 import { composeManual, generateFilter, populate } from "./helper.js";
 import { paginate } from "../../helpers/paginate.js";
 import { makeRequest } from "../../helpers/fetch.js";
-import { sendBulkMail, sendMail } from "../../services/mail.js";
+import { sendBulkMail, sendBrevoMail } from "../../services/mail.js";
 import expiredCertificate from "../../mails/expired-certificate.js";
 import { documentTypes } from "../../base/request.js";
 import { uploadFiles } from "../../services/storage.js";
@@ -119,8 +119,8 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
                         })
                     })
                     
-                    sendMail({
-                        receivers: [{ email: dept.email, name: dept.name }],
+                    sendBrevoMail({
+                        email: dept.email,
                         subject: 'DOCUMENT EXPIRING SOON',
                         body: expiredCertificate({
                             title: 'DOCUMENT EXPIRING SOON',

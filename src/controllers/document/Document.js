@@ -1,4 +1,4 @@
-import { sendMail } from "../../services/mail.js"
+import { sendBrevoMail } from "../../services/mail.js"
 import { paginate } from "../../helpers/paginate.js"
 import { error, success } from "../../helpers/response.js"
 import asyncWrapper from "../../middlewares/async.js"
@@ -112,8 +112,8 @@ class DocumentController {
 
             await makeRequest('POST', 'alerts/new', apiKey, notify, {})
 
-            sendMail({
-                receivers: [{email: data.companyEmail, name: data.fullName}],
+            sendBrevoMail({
+                email: data.companyEmail,
                 subject: "DOCUMENT APPROVAL",
                 body: documentApproval({
                     title: "DOCUMENT APPROVAL",
