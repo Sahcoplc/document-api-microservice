@@ -103,19 +103,6 @@ mailTransport.verify((error, success) => {
   }
 });
 
-const handlebarOptions = {
-  viewEngine: {
-    partialsDir: path.resolve("./app/views/partials/"),
-    layoutsDir: path.resolve("./app/views/layout/"),
-    defaultLayout: "main",
-    extname: ".hbs",
-  },
-  extName: ".hbs",
-  viewPath: path.resolve("./app/views/"),
-};
-
-mailTransport.use("compile", hbs(handlebarOptions));
-
 export const sendBrevoMail = ({email, subject, body}) => {
     const mailOptions = {
       from: '"Skyway Aviation Handling Company Plc." <info@sahcoplc.com.ng>',
