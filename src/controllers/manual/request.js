@@ -37,7 +37,7 @@ export const uploadManualSchema = Joi.object({
         is: documentTypes.contract,
         then: Joi.required()
     }),
-    attachments: Joi.array(Joi.string()),
+    attachments: Joi.array().items(Joi.string()),
     files: Joi.any()
 })
 
