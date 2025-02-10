@@ -89,9 +89,10 @@ export const sendBulkMail = async ({ receivers = [], subject, body }) => {
 const mailTransport = nodemailer.createTransport({
   host: process.env.SENDINBLUE_HOST,
   port: process.env.SENDINBLUE_PORT,
+  secure: true,
   auth: {
     user: process.env.SENDINBLUE_USER,
-    pass: process.env.SENDINBLUE_PASS
+    pass: process.env.SENDINBLUE_PASSWORD
   }
 });
 
@@ -102,7 +103,6 @@ mailTransport.verify((error, success) => {
     console.log("Mail transport success - " + success);
   }
 });
-
 export const sendBrevoMail = ({email, subject, body}) => {
     const mailOptions = {
       from: '"Skyway Aviation Handling Company Plc." <info@sahcoplc.com.ng>',

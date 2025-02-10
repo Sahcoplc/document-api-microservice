@@ -14,7 +14,6 @@ cron.schedule('0 0 * * * *', async () => {
 const serverStart = async () => {
     try {
         // Open MongoDB Connection
-
         await connectDB()
 
         server.listen(PORT, ()=> {
@@ -27,4 +26,4 @@ const serverStart = async () => {
     }
 }
 
-await serverStart()
+await serverStart() 

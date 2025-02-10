@@ -12,9 +12,7 @@ import { uploadFiles } from "../../services/storage.js";
 export const uploadManual = asyncWrapper(async (req, res) => {
     try {
         const { locals: { manual } } = req
-
         const result = await Manual(manual).save()
-
         return success(res, 201, result)
     } catch (e) {
         let message = 'Something went wrong'
@@ -27,9 +25,7 @@ export const uploadManual = asyncWrapper(async (req, res) => {
 export const editManual = asyncWrapper(async (req, res) => {
     try {
         const { body, params: { id } } = req;
-
         const found = await Manual.findById(id).lean()
-        
         if (!found) {
             return error(res, 400, 'Document does not exist')
         }
@@ -55,15 +51,10 @@ export const fetch = asyncWrapper(async (req, res) => {
     
     try {
         const { user: { department: { _id } }, query: { page, limit } } = req
-    
         const filter = generateFilter({ ...req.query, deptId: _id })
-
         const modelName = "Manual"
-
         const options = { page, limit, filter, modelName, sort: { createdAt: -1 }, populate: populate() };
-        
         const manuals = await paginate(options)
-
         return success(res, 200, manuals)
     } catch (e) {
         return error(res, 500, e)

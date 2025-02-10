@@ -17,9 +17,9 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
     const { data: permissions } = await getPermission(user.permissions, apiKey);
 
     req.user = { ...user, permissions, apiKey };
-
     return next();
   } catch (err) {
+    console.log(err)
     throw createCustomError(err?.message || "Network Error", 500);
   }
 });
