@@ -24,6 +24,7 @@ export const uploadManual = asyncWrapper(async (req, res) => {
 
 export const editManual = asyncWrapper(async (req, res) => {
     try {
+        console.log("here")
         const { body, params: { id } } = req;
         const found = await Manual.findById(id).lean()
         if (!found) {
@@ -39,11 +40,12 @@ export const editManual = asyncWrapper(async (req, res) => {
             delete body.files
         }
 
-        const result = await Manual.findByIdAndUpdate({ id }, { $set: body }, { new: true })
+        const result = await Manual.findByIdAndUpdate({ _id: id }, { $set: body }, { new: true })
 
         return success(res, 200, result)
     } catch (e) {
-        return error(res, 500, message)
+        console.log(e)
+        return error(res, 500, "internal server error", null)
     }
 })
 

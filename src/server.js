@@ -17,8 +17,6 @@ import routes from "./routes/index.js";
 import authMiddleware from "./base/auth.js";
 import { client } from "./services/redis.js";
 import { rollbar } from "./services/rollbar.js";
-import bodyParser from 'body-parser';
-
 
 dotenv.config();
 
@@ -34,11 +32,10 @@ const {
 await client.connect();
 const app = express();
 app.use(compression());
-app.use(bodyParser.json());
-app.set("trust proxy", 1);
-app.use(express.json({ limit: "100MB" }));
-// app.use(express.urlencoded({ extended: false }));
 
+app.set("trust proxy", 1);
+app.use(express.json({ limit: "3MB" }));
+app.use(express.urlencoded({ extended: false }));
 
 const server = http.createServer(app);
 
@@ -53,7 +50,8 @@ const getOrigin = (origin, callback) => {
 
 const corsOptions = {
   credentials: true,
-  origin: getOrigin
+  origin: getOrigin,
+  allowedHeaders: ['Content-Type', 'x-sahcoapi-key']
 };
 
 const options = {

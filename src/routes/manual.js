@@ -8,8 +8,8 @@ const router = Router()
 
 router.get('/:id', validator.params(idSchema), fetchSingleManual)
 router.post('/', validator.body(uploadManualSchema), isAuthorized(['create-manual', 'create-certificate', 'create-license', 'create-contract', 'super-create'], [], []), validateUploadManualOrCertifications, uploadManual)
-router.patch('/:id', validator.body(uploadManualSchema), isAuthorized(['create-manual', 'create-certificate', 'create-license', 'create-contract', 'super-create'], [], []), editManual)
+router.patch('/:id' ,validator.body(uploadManualSchema), isAuthorized(['create-manual', 'create-certificate', 'create-license', 'create-contract', 'super-create'], [], []), editManual)
 router.get('/', validator.query(fetchManualSchema), fetch)
 router.patch('/update-status', validateExpiredManualsOrCertifications, updateManualOrCertificationStatus)
 
-export default router
+export default router;

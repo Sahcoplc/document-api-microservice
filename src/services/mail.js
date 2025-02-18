@@ -100,12 +100,14 @@ mailTransport.verify((error, success) => {
   if (error) {
     console.log("Mail transport error - " + error);
   } else {
-    console.log("Mail transport success - " + success);
+    console.log("Mail transport success -" + success);
   }
 });
+
 export const sendBrevoMail = ({email, subject, body}) => {
+  console.log(email, subject)
     const mailOptions = {
-      from: '"Skyway Aviation Handling Company Plc." <info@sahcoplc.com.ng>',
+      from: '"Skyway Aviation Handling Company Plc." <info@sahcoplc.com>',
       to: email,
       subject: subject || `Skyway Aviation Handling Company Plc.`,
       template: "emailTemplate",
@@ -115,6 +117,7 @@ export const sendBrevoMail = ({email, subject, body}) => {
 
     // eslint-disable-next-line no-console
     mailTransport.sendMail(mailOptions, function (error, info) {
+      console.log(info)
       if (error) {
         console.log("Mail - ", error);
       }
