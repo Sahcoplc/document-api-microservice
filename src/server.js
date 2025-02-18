@@ -32,8 +32,9 @@ const {
 await client.connect();
 const app = express();
 app.use(compression());
+
 app.set("trust proxy", 1);
-app.use(express.json({ limit: "30MB" }));
+app.use(express.json({ limit: "3MB" }));
 app.use(express.urlencoded({ extended: false }));
 
 const server = http.createServer(app);
@@ -49,7 +50,8 @@ const getOrigin = (origin, callback) => {
 
 const corsOptions = {
   credentials: true,
-  origin: getOrigin
+  origin: getOrigin,
+  allowedHeaders: ['Content-Type', 'x-sahcoapi-key']
 };
 
 const options = {
