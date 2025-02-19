@@ -63,6 +63,7 @@ export const fetch = asyncWrapper(async (req, res) => {
     }
 })
 
+
 export const fetchSingleManual = asyncWrapper(async (req, res) => {
     try {
         const { user: { department: { _id: deptId } }, params: { id } } = req
