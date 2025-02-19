@@ -4,12 +4,13 @@ import DocumentController from "../controllers/document/Document.js";
 import { approveDocSchema, approveIdsSchema, createDocumentSchema, filterDocSchema, validateApproveDocument, validateCreateDocument, validateUpdateDocument } from "../controllers/document/request.js";
 import { isAuthorized } from "../middlewares/isAuthorized.js";
 import { uploadImage } from "../services/storage.js";
+import { uploadS3 } from "../services/s3upload.js";
 
 const router = Router();
-
 const docController = new DocumentController()
 
 router.post('/new', validator.body(createDocumentSchema), uploadImage.array('attachments'), validateCreateDocument, docController.createDocument)
+router.post('/upload', uploadS3.single('attachment'), docController.uploadDocuments)
 router.patch('/:id', validator.params(idSchema), validator.body(createDocumentSchema), uploadImage.array('attachments'), validateUpdateDocument, docController.updateDocument)
 router.get('/mine', validator.query(filterDocSchema), docController.fetchMyDocuments)
 router.patch('/approve/:id/:movementId', validator.params(approveIdsSchema), validator.body(approveDocSchema), isAuthorized(['super-edit', 'approve-document'], [], []), validateApproveDocument, docController.approveDocument)

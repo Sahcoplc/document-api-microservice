@@ -25,6 +25,18 @@ class DocumentController {
             return error(res, 500, e)
         }
     })
+
+    uploadDocuments = asyncWrapper(async (req, res) => {
+    
+        try {
+            const file = req.file
+            console.log(file)
+            return success(res, 200, file.location)
+        } catch (e) {
+            return error(res, 500, e)
+        }
+    })
+    
     
     updateDocument = asyncWrapper(async (req, res) => {
         try {
