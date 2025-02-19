@@ -30,7 +30,9 @@ class DocumentController {
     
         try {
             const file = req.file
-            console.log(file)
+            if(!file){
+                return error(res, 400, "no file was uploaded")
+            }
             return success(res, 200, file.location)
         } catch (e) {
             return error(res, 500, e)

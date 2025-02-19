@@ -12,4 +12,5 @@ router.patch('/:id' , isAuthorized(['create-manual', 'create-certificate', 'crea
 router.get('/', validator.query(fetchManualSchema), fetch)
 router.patch('/update-status', validateExpiredManualsOrCertifications, updateManualOrCertificationStatus)
 
+
 export default router;
