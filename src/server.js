@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: false }));
 const server = http.createServer(app);
 
 const getOrigin = (origin, callback) => {
-  const allowedOrigin = !origin || ["localhost", "database-app-nine.vercel.app", "internals.sahcoplc.com.ng"].some((value) => origin.includes(value));
+  const allowedOrigin = !origin || ["localhost", "sahco-staging.vercel.app", "internals.sahcoplc.com.ng"].some((value) => origin.includes(value));
   if (allowedOrigin) {
     callback(null, true);
   } else {
