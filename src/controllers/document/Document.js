@@ -1,4 +1,4 @@
-import { sendMail } from "../../services/mail.js"
+import { sendBrevoMail } from "../../services/mail.js"
 import { paginate } from "../../helpers/paginate.js"
 import { error, success } from "../../helpers/response.js"
 import asyncWrapper from "../../middlewares/async.js"
@@ -25,6 +25,20 @@ class DocumentController {
             return error(res, 500, e)
         }
     })
+
+    uploadDocuments = asyncWrapper(async (req, res) => {
+    
+        try {
+            const file = req.file
+            if(!file){
+                return error(res, 400, "no file was uploaded")
+            }
+            return success(res, 200, file.location)
+        } catch (e) {
+            return error(res, 500, e)
+        }
+    })
+    
     
     updateDocument = asyncWrapper(async (req, res) => {
         try {
@@ -112,8 +126,8 @@ class DocumentController {
 
             await makeRequest('POST', 'alerts/new', apiKey, notify, {})
 
-            sendMail({
-                receivers: [{email: data.companyEmail, name: data.fullName}],
+            sendBrevoMail({
+                email: data.companyEmail,
                 subject: "DOCUMENT APPROVAL",
                 body: documentApproval({
                     title: "DOCUMENT APPROVAL",

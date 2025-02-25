@@ -1,7 +1,7 @@
 import DocumentMovement from "../../models/DocumentMovement.js"
 import { error, success } from "../../helpers/response.js"
 import asyncWrapper from "../../middlewares/async.js"
-import { sendMail } from "../../services/mail.js"
+import { sendBrevoMail } from "../../services/mail.js"
 import documentInbox from "../../mails/new-document.js"
 import { generateMovementFilter } from "./helper.js"
 import { makeRequest } from "../../helpers/fetch.js"
@@ -26,8 +26,8 @@ class DocumentMovementControl {
 
             await makeRequest('POST', 'alerts/new', apiKey, notify, {})
 
-            sendMail({
-                receivers: [{email: movement.to.email, name: movement.to.name}],
+            sendBrevoMail({
+                email: movement.to.email,
                 subject: "DOCUMENT APPROVAL REQUEST",
                 body: documentInbox({
                     title: "DOCUMENT APPROVAL REQUEST",
@@ -39,8 +39,8 @@ class DocumentMovementControl {
                 })
             })
             
-            sendMail({
-                receivers: [{ email, name }],
+            sendBrevoMail({
+                email,
                 subject: "DOCUMENT APPROVAL REQUEST",
                 body: documentInbox({
                     title: "DOCUMENT APPROVAL REQUEST",

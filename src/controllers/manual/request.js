@@ -37,7 +37,8 @@ export const uploadManualSchema = Joi.object({
         is: documentTypes.contract,
         then: Joi.required()
     }),
-    attachments: Joi.any().required()
+    attachments: Joi.array().items(Joi.string()),
+    files: Joi.any()
 })
 
 export const fetchManualSchema = Joi.object({
@@ -62,7 +63,8 @@ export const validateUploadManualOrCertifications = asyncWrapper(async (req, res
         // Upload files attached to AWS SE storage
         const folder = body.type === documentTypes.manual ? 'manuals' : 'certificates'
 
-        if (body.attachments) body.attachments = await uploadFiles(body.attachments, folder)
+        if (body.files) body.attachments = await uploadFiles(body.files, folder)
+        delete body.files;
         const docType = body.type[0];
         const matches = pickRandomCharacters(body.title, 3)
 

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import fs from "fs";
 import axios from "axios";
 import { MailerSend, EmailParams, Sender, Recipient, Attachment } from "mailersend";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -43,7 +44,7 @@ export const sendMail = async ({ receivers = [], subject, body }) => {
     }
 }
 
-export const sendMailWithAttachment = async ({ receivers = [], subject, body, attachment }) => {
+export const sendBrevoMailWithAttachment = async ({ receivers = [], subject, body, attachment }) => {
 
     const recipients = receivers.map(receiver => new Recipient(receiver.email, receiver.name));
     
@@ -83,4 +84,48 @@ export const sendBulkMail = async ({ receivers = [], subject, body }) => {
     } catch (e) {
         return e
     }
+}
+
+const mailTransport = nodemailer.createTransport({
+  host: process.env.SENDINBLUE_HOST,
+  port: process.env.SENDINBLUE_PORT,
+  secure: true,
+  auth: {
+    user: process.env.SENDINBLUE_USER,
+    pass: process.env.SENDINBLUE_PASSWORD
+  }
+});
+
+mailTransport.verify((error, success) => {
+  if (error) {
+    console.log("Mail transport error - " + error);
+  } else {
+    console.log("Mail transport success -" + success);
+  }
+});
+
+export const sendBrevoMail = ({email, subject, body}) => {
+    const mailOptions = {
+      from: '"Skyway Aviation Handling Company Plc." <info@sahcoplc.com>',
+      to: email,
+      subject: subject || `Skyway Aviation Handling Company Plc.`,
+      template: "emailTemplate",
+    //   context: body,
+      html: body
+    };
+
+    // eslint-disable-next-line no-console
+    mailTransport.sendMail(mailOptions, function (error, info) {
+      console.log(info)
+     
+      if (error) {
+        console.log("Mail - ", error);
+        return error
+      }
+    
+      
+      console.log("Message sent: ", info);
+      // mailTransport.close();
+      return info
+    });
 }

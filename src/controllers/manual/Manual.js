@@ -4,15 +4,15 @@ import asyncWrapper from "../../middlewares/async.js";
 import { composeManual, generateFilter, populate } from "./helper.js";
 import { paginate } from "../../helpers/paginate.js";
 import { makeRequest } from "../../helpers/fetch.js";
-import { sendBulkMail, sendMail } from "../../services/mail.js";
+import { sendBulkMail, sendBrevoMail } from "../../services/mail.js";
 import expiredCertificate from "../../mails/expired-certificate.js";
+import { documentTypes } from "../../base/request.js";
+import { uploadFiles } from "../../services/storage.js";
 
 export const uploadManual = asyncWrapper(async (req, res) => {
     try {
         const { locals: { manual } } = req
-
         const result = await Manual(manual).save()
-
         return success(res, 201, result)
     } catch (e) {
         let message = 'Something went wrong'
@@ -22,24 +22,47 @@ export const uploadManual = asyncWrapper(async (req, res) => {
     }
 })
 
+export const editManual = asyncWrapper(async (req, res) => {
+    try {
+        console.log("here")
+        const { body, params: { id } } = req;
+        const found = await Manual.findById(id).lean()
+        if (!found) {
+            return error(res, 400, 'Document does not exist')
+        }
+
+        // Upload files attached to AWS SE storage
+        const folder = body.type === documentTypes.manual ? 'manuals' : 'certificates'
+
+        if (body.files) {
+            const newattach = await uploadFiles(body.files, folder)
+            body.attachments.push(...newattach)
+            delete body.files
+        }
+
+        const result = await Manual.findByIdAndUpdate({ _id: id }, { $set: body }, { new: true })
+
+        return success(res, 200, result)
+    } catch (e) {
+        console.log(e)
+        return error(res, 500, "internal server error", null)
+    }
+})
+
 export const fetch = asyncWrapper(async (req, res) => {
     
     try {
         const { user: { department: { _id } }, query: { page, limit } } = req
-    
         const filter = generateFilter({ ...req.query, deptId: _id })
-
         const modelName = "Manual"
-
         const options = { page, limit, filter, modelName, sort: { createdAt: -1 }, populate: populate() };
-        
         const manuals = await paginate(options)
-
         return success(res, 200, manuals)
     } catch (e) {
         return error(res, 500, e)
     }
 })
+
 
 export const fetchSingleManual = asyncWrapper(async (req, res) => {
     try {
@@ -90,8 +113,8 @@ export const updateManualOrCertificationStatus = asyncWrapper(async (req, res) =
                         })
                     })
                     
-                    sendMail({
-                        receivers: [{ email: dept.email, name: dept.name }],
+                    sendBrevoMail({
+                        email: dept.email,
                         subject: 'DOCUMENT EXPIRING SOON',
                         body: expiredCertificate({
                             title: 'DOCUMENT EXPIRING SOON',
