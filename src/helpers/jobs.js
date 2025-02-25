@@ -42,12 +42,26 @@ export const sendEmailForExpiry = async () => {
       manual.type === documentTypes.license || manual.type === documentTypes.contract
     );
 
+    console.log(legalDoc)
+
     const safetyDocs = manuals.find((manual) =>
       manual.type === documentTypes.manual || manual.type === documentTypes.cert
     );
+    // for (let i = 0; i < legalDoc.length; i++) {
+    //   sendBrevoMail({
+    //     email: DEPT_CONSTANT.LEGAL,
+    //     subject: 'DOCUMENT EXPIRING SOON',
+    //     body: expiredCertificate({
+    //       title: 'DOCUMENT EXPIRING SOON',
+    //       expireDate: legalDoc.dueDate,
+    //       docName: legalDoc.title,
+    //       url: legalDoc?.attachments[0]
+    //     })
+    //   })
+    // }
     for (let i = 0; i < legalDoc.length; i++) {
       sendBrevoMail({
-        email: DEPT_CONSTANT.LEGAL,
+        email: "eme.udobong@sahcoplc.com",
         subject: 'DOCUMENT EXPIRING SOON',
         body: expiredCertificate({
           title: 'DOCUMENT EXPIRING SOON',
@@ -58,18 +72,18 @@ export const sendEmailForExpiry = async () => {
       })
     }
 
-    for (let i = 0; i < safetyDocs.length; i++) {
-      sendBrevoMail({
-        email: DEPT_CONSTANT.LEGAL,
-        subject: 'DOCUMENT EXPIRING SOON',
-        body: expiredCertificate({
-          title: 'DOCUMENT EXPIRING SOON',
-          expireDate: safetyDocs.dueDate,
-          docName: safetyDocs.title,
-          url: safetyDocs?.attachments[0]
-        })
-      })
-    }
+    // for (let i = 0; i < safetyDocs.length; i++) {
+    //   sendBrevoMail({
+    //     email: DEPT_CONSTANT.LEGAL,
+    //     subject: 'DOCUMENT EXPIRING SOON',
+    //     body: expiredCertificate({
+    //       title: 'DOCUMENT EXPIRING SOON',
+    //       expireDate: safetyDocs.dueDate,
+    //       docName: safetyDocs.title,
+    //       url: safetyDocs?.attachments[0]
+    //     })
+    //   })
+    // }
 
     return true;
   } catch (err) {
