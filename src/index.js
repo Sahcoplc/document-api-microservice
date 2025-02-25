@@ -9,7 +9,7 @@ import expiredCertificate from "./mails/expired-certificate.js"
 
 const { PORT } = process.env
 
-cron.schedule('15 10 * * *', async () => {
+cron.schedule('0 12 * * 1-5', async () => {
     console.log("Running job every 10 minutes!");
     await sendEmailForExpiry();
     console.log("====== END =======");
