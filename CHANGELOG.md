@@ -1,3 +1,22 @@
+# [1.2.0](https://github.com/Sahcoplc/document-api-microservice/compare/v1.1.2...v1.2.0) (2025-02-25)
+
+
+### Bug Fixes
+
+* added a new endpoint to uplaod documents to s3 bucket ([51dc257](https://github.com/Sahcoplc/document-api-microservice/commit/51dc257f8bba6b78d1650d4cde2f2a3005191c41))
+* added new url to cors origin ([2604812](https://github.com/Sahcoplc/document-api-microservice/commit/260481249ebfa611a9875b65402076fe32cc2c8b))
+* added null check ([6b87b81](https://github.com/Sahcoplc/document-api-microservice/commit/6b87b815580e2351240ab0e6e211e6c67d949acc))
+* crin job not working ([30759f7](https://github.com/Sahcoplc/document-api-microservice/commit/30759f75c5a855e88e1c12e92f0c930bab26fb9d))
+* crin job not working ([9044fcc](https://github.com/Sahcoplc/document-api-microservice/commit/9044fcc2ea60d331f49c4f650ce51b61d9bee089))
+* cron job not sending ([41f4fea](https://github.com/Sahcoplc/document-api-microservice/commit/41f4fea19a639f72c1dd5fe5eff40df2b4eb1b97))
+* removed unused imports ([015f7ae](https://github.com/Sahcoplc/document-api-microservice/commit/015f7ae76597b3aa004a9af9f0320ddb2592ba58))
+
+
+### Features
+
+* cron job implementation ([124ece8](https://github.com/Sahcoplc/document-api-microservice/commit/124ece8318cf8801c1e20a97c66bfc07462aad42))
+* re-implemented notification feature ([652ac39](https://github.com/Sahcoplc/document-api-microservice/commit/652ac39df0d20f60e281fbb169377659c19bd67b))
+
 ## [1.1.2](https://github.com/Sahcoplc/document-api-microservice/compare/v1.1.1...v1.1.2) (2024-08-09)
 
 
