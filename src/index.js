@@ -2,10 +2,7 @@
 import { connectDB } from "./services/database.js"
 import server from "./server.js"
 import cron from 'node-cron'
-import { updateCertificateStatus } from "./helpers/fetch.js"
 import { sendEmailForExpiry } from "./helpers/jobs.js"
-import { sendBrevoMail } from "./services/mail.js"
-import expiredCertificate from "./mails/expired-certificate.js"
 
 const { PORT } = process.env
 
