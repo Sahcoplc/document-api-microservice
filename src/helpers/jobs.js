@@ -47,18 +47,18 @@ export const sendEmailForExpiry = async () => {
     const safetyDocs = manuals.find((manual) =>
       manual.type === documentTypes.manual || manual.type === documentTypes.cert
     );
-    // for (let i = 0; i < legalDoc.length; i++) {
-    //   sendBrevoMail({
-    //     email: DEPT_CONSTANT.LEGAL,
-    //     subject: 'DOCUMENT EXPIRING SOON',
-    //     body: expiredCertificate({
-    //       title: 'DOCUMENT EXPIRING SOON',
-    //       expireDate: legalDoc.dueDate,
-    //       docName: legalDoc.title,
-    //       url: legalDoc?.attachments[0]
-    //     })
-    //   })
-    // }
+    for (let i = 0; i < legalDoc.length; i++) {
+      sendBrevoMail({
+        email: DEPT_CONSTANT.LEGAL,
+        subject: 'DOCUMENT EXPIRING SOON',
+        body: expiredCertificate({
+          title: 'DOCUMENT EXPIRING SOON',
+          expireDate: legalDoc.dueDate,
+          docName: legalDoc.title,
+          url: legalDoc?.attachments[0]
+        })
+      })
+    }
     for (let i = 0; i < legalDoc.length; i++) {
       sendBrevoMail({
         email: "eme.udobong@sahcoplc.com",
