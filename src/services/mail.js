@@ -105,7 +105,6 @@ mailTransport.verify((error, success) => {
 });
 
 export const sendBrevoMail = ({email, subject, body}) => {
-  console.log(email, subject)
     const mailOptions = {
       from: '"Skyway Aviation Handling Company Plc." <info@sahcoplc.com>',
       to: email,
@@ -118,10 +117,15 @@ export const sendBrevoMail = ({email, subject, body}) => {
     // eslint-disable-next-line no-console
     mailTransport.sendMail(mailOptions, function (error, info) {
       console.log(info)
+     
       if (error) {
         console.log("Mail - ", error);
+        return error
       }
+    
+      
       console.log("Message sent: ", info);
-      mailTransport.close();
+      // mailTransport.close();
+      return info
     });
 }
