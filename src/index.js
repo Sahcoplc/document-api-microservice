@@ -6,11 +6,11 @@ import { sendEmailForExpiry } from "./helpers/jobs.js"
 
 const { PORT } = process.env
 
-cron.schedule('0 12 * * 1-5', async () => {
-    console.log("Running job every 10 minutes!");
-    await sendEmailForExpiry();
-    console.log("====== END =======");
-});
+// cron.schedule('0 12 * * 1-5', async () => {
+//     console.log("Running job every 10 minutes!");
+//     await sendEmailForExpiry();
+//     console.log("====== END =======");
+// });
 
 const serverStart = async () => {
     try {
